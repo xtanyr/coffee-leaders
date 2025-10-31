@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Shop Leaders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .form-section, .list-section {
+            flex: 1;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 8px;
+            margin-top: 5px;
+        }
+        button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Coffee Shop Leaders</h1>
+    
+    <div class="container">
+        <div class="form-section">
+            <h2>Add New Leader</h2>
+            <form id="leaderForm">
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div>
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" required>
+                </div>
+                <div>
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" required>
+                </div>
+                <div>
+                    <label for="city">City:</label>
+                    <input type="text" id="city" required>
+                </div>
+                <div>
+                    <label for="coffeeShop">Coffee Shop:</label>
+                    <input type="text" id="coffeeShop" required>
+                </div>
+                <button type="submit">Add Leader</button>
+            </form>
+        </div>
+
+        <div class="list-section">
+            <h2>Leaders List</h2>
+            <div>
+                <label for="filterCity">Filter by City:</label>
+                <select id="filterCity" onchange="filterLeaders()">
+                    <option value="">All Cities</option>
+                </select>
+                <button onclick="getStats()">Show Statistics</button>
+            </div>
+            <div id="stats"></div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Start Date</th>
+                        <th>Age</th>
+                        <th>City</th>
+                        <th>Coffee Shop</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="leadersList">
+                    <!-- Leaders will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/leaders';
+        let leaders = [];
+
+        // Load leaders when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchLeaders();
+            document.getElementById('leaderForm').addEventListener('submit', handleSubmit);
+        });
+
+        async function fetchLeaders() {
+            try {
+                const response = await fetch(API_URL);
+                leaders = await response.json();
+                displayLeaders(leaders);
+                updateCityFilter(leaders);
+            } catch (error) {
+                console.error('Error fetching leaders:', error);
+            }
+        }
+
+        function displayLeaders(leadersToShow) {
+            const tbody = document.getElementById('leadersList');
+            tbody.innerHTML = leadersToShow.map(leader => `
+                <tr>
+                    <td>${leader.name}</td>
+                    <td>${new Date(leader.startDate).toLocaleDateString()}</td>
+                    <td>${leader.age}</td>
+                    <td>${leader.city}</td>
+                    <td>${leader.coffeeShop}</td>
+                    <td>
+                        <button onclick="deleteLeader(${leader.id})">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateCityFilter(leaders) {
+            const select = document.getElementById('filterCity');
+            const cities = [...new Set(leaders.map(leader => leader.city))];
+            
+            // Keep the first option and clear the rest
+            select.innerHTML = '<option value="">All Cities</option>';
+            
+            cities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                select.appendChild(option);
+            });
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            
+            const leader = {
+                name: document.getElementById('name').value,
+                startDate: document.getElementById('startDate').value,
+                age: parseInt(document.getElementById('age').value),
+                city: document.getElementById('city').value,
+                coffeeShop: document.getElementById('coffeeShop').value
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(leader)
+                });
+                
+                if (response.ok) {
+                    // Clear form and refresh the list
+                    e.target.reset();
+                    fetchLeaders();
+                }
+            } catch (error) {
+                console.error('Error adding leader:', error);
+            }
+        }
+
+        async function deleteLeader(id) {
+            if (confirm('Are you sure you want to delete this leader?')) {
+                try {
+                    const response = await fetch(`${API_URL}/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        fetchLeaders();
+                    }
+                } catch (error) {
+                    console.error('Error deleting leader:', error);
+                }
+            }
+        }
+
+        function filterLeaders() {
+            const city = document.getElementById('filterCity').value;
+            const filtered = city 
+                ? leaders.filter(leader => leader.city === city)
+                : leaders;
+            displayLeaders(filtered);
+        }
+
+        async function getStats() {
+            try {
+                const response = await fetch(`${API_URL}/stats`);
+                const stats = await response.json();
+                
+                const statsDiv = document.getElementById('stats');
+                statsDiv.innerHTML = `
+                    <h3>Statistics</h3>
+                    <p>Total Leaders: ${stats.totalLeaders}</p>
+                    <h4>Leaders by City:</h4>
+                    <ul>
+                        ${stats.statsByCity.map(city => 
+                            `<li>${city.city}: ${city.count} leaders</li>`
+                        ).join('')}
+                    </ul>
+                `;
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+    </script>
+</body>
+</html>
