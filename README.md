@@ -1,80 +1,46 @@
-# Coffee Shop Leaders Monitor
+# Getting Started with Create React App
 
-A simple web application to monitor and manage coffee shop leaders.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Features
+## Available Scripts
 
-- View all leaders in a list
-- Filter leaders by city
-- View statistics about leaders
-- Add, edit, and remove leaders
-- Simple REST API for integration
+In the project directory, you can run:
 
-## Prerequisites
+### `npm start`
 
-- Node.js (v16 or higher)
-- npm (v8 or higher)
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-## Installation
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+### `npm test`
 
-## Running the Application
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### Development Mode
-```bash
-npm run dev
-```
+### `npm run build`
 
-The server will start at http://localhost:3000
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-### Production Build
-```bash
-npm run build
-npm start
-```
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-## API Endpoints
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-- `GET /api/leaders` - Get all leaders
-- `GET /api/leaders/city/:city` - Get leaders by city
-- `GET /api/leaders/stats` - Get leader statistics
-- `POST /api/leaders` - Create a new leader
-- `PUT /api/leaders/:id` - Update a leader
-- `DELETE /api/leaders/:id` - Delete a leader
+### `npm run eject`
 
-## Data Model
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-Leader:
-- id: number (auto-generated)
-- name: string
-- startDate: Date (format: YYYY-MM-DD)
-- age: number
-- city: string
-- coffeeShop: string
-- createdAt: Date (auto-generated)
-- updatedAt: Date (auto-generated)
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-## Deployment
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-1. Build the application:
-   ```bash
-   npm run build
-   ```
-2. Start the server:
-   ```bash
-   npm start
-   ```
-3. Use a process manager like PM2 to keep the application running:
-   ```bash
-   npm install -g pm2
-   pm2 start dist/index.js --name "coffee-leaders"
-   ```
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## License
+## Learn More
 
-MIT
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
