@@ -334,6 +334,83 @@ function App() {
       </div>
 
       <div className="main-content">
+        <div className="tab-buttons" style={{
+          display: 'flex',
+          gap: '15px',
+          marginBottom: '30px',
+          justifyContent: 'center',
+          flexWrap: 'wrap'
+        }}>
+          <button
+            className={`tab-btn ${activeTab === 'leader' ? 'active' : ''}`}
+            onClick={() => setActiveTab('leader')}
+            style={{
+              padding: '12px 28px',
+              border: '2px solid #59c9a5ff',
+              background: activeTab === 'leader' ? '#59c9a5ff' : 'white',
+              color: activeTab === 'leader' ? 'white' : '#071013ff',
+              borderRadius: '25px',
+              cursor: 'pointer',
+              fontWeight: 600,
+              fontSize: '1rem',
+              transition: 'all 0.3s ease',
+              boxShadow: activeTab === 'leader' 
+                ? '0 6px 20px rgba(89, 201, 165, 0.4)' 
+                : '0 4px 15px rgba(89, 201, 165, 0.2)',
+            }}
+            onMouseOver={(e) => {
+              if (activeTab !== 'leader') {
+                e.currentTarget.style.background = '#f3e8eeff';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(89, 201, 165, 0.3)';
+              }
+            }}
+            onMouseOut={(e) => {
+              if (activeTab !== 'leader') {
+                e.currentTarget.style.background = 'white';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(89, 201, 165, 0.2)';
+              }
+            }}
+          >
+            Показать Лидеров
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'coffeeShop' ? 'active' : ''}`}
+            onClick={() => setActiveTab('coffeeShop')}
+            style={{
+              padding: '12px 28px',
+              border: '2px solid #ff5a5fff',
+              background: activeTab === 'coffeeShop' ? '#ff5a5fff' : 'white',
+              color: activeTab === 'coffeeShop' ? 'white' : '#071013ff',
+              borderRadius: '25px',
+              cursor: 'pointer',
+              fontWeight: 600,
+              fontSize: '1rem',
+              transition: 'all 0.3s ease',
+              boxShadow: activeTab === 'coffeeShop' 
+                ? '0 6px 20px rgba(255, 90, 95, 0.4)' 
+                : '0 4px 15px rgba(255, 90, 95, 0.2)',
+            }}
+            onMouseOver={(e) => {
+              if (activeTab !== 'coffeeShop') {
+                e.currentTarget.style.background = '#f3e8eeff';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 90, 95, 0.3)';
+              }
+            }}
+            onMouseOut={(e) => {
+              if (activeTab !== 'coffeeShop') {
+                e.currentTarget.style.background = 'white';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 90, 95, 0.2)';
+              }
+            }}
+          >
+            Показать Кофейни
+          </button>
+        </div>
+        
         <div className="action-buttons">
           <button
             className="add-btn"
