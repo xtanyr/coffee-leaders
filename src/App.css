@@ -284,6 +284,121 @@ body {
   margin-bottom: 20px;
 }
 
+/* PIP Info Styles */
+.pip-info {
+  background-color: #f8f9fa;
+  border-left: 4px solid #59c9a5;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  margin: 6px 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.pip-info:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pip-info div {
+  margin: 6px 0;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+}
+
+.pip-info strong {
+  color: #2a9d8f;
+  font-size: 1.05em;
+  display: block;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.pip-label {
+  font-weight: 500;
+  color: #6c757d;
+  margin-right: 4px;
+  min-width: 90px;
+  display: inline-block;
+}
+
+.pip-warning {
+  color: #dc3545;
+  font-weight: 500;
+  margin-left: 4px;
+  font-size: 0.85em;
+}
+
+.pip-chance {
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.pip-chance-high {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.pip-chance-medium {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.pip-chance-low {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Highlight for PIP in progress */
+.pip-in-progress {
+  background-color: #e7f5ff;
+  border-left-color: #4dabf7;
+}
+
+.pip-in-progress strong {
+  color: #1971c2;
+}
+
+/* Highlight for PIP at risk */
+.pip-at-risk {
+  background-color: #fff0f3;
+  border-left-color: #ff6b6b;
+  animation: pulse 2s infinite;
+}
+
+.pip-at-risk strong {
+  color: #c92a2a;
+}
+
+/* Highlight for PIP completed */
+.pip-completed {
+  background-color: #ebfbee;
+  border-left-color: #40c057;
+  opacity: 0.8;
+}
+
+.pip-completed strong {
+  color: #2b8a3e;
+  text-decoration: line-through;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.9;
+  }
+}
+
 .form-label {
   display: block;
   font-weight: 500;

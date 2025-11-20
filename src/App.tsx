@@ -35,7 +35,10 @@ function App() {
     endDate: '',
     birthDate: '',
     city: '',
-    coffeeShop: ''
+    coffeeShop: '',
+    pipName: '',
+    pipEndDate: '',
+    pipSuccessChance: ''
   });
 
   const [coffeeShopForm, setCoffeeShopForm] = useState({
@@ -142,7 +145,10 @@ function App() {
       endDate: leaderForm.endDate || undefined,
       birthDate: leaderForm.birthDate,
       city: leaderForm.city,
-      coffeeShop: leaderForm.coffeeShop
+      coffeeShop: leaderForm.coffeeShop,
+      pipName: leaderForm.pipName || undefined,
+      pipEndDate: leaderForm.pipEndDate || undefined,
+      pipSuccessChance: leaderForm.pipSuccessChance ? parseInt(leaderForm.pipSuccessChance) : undefined
     };
 
     try {
@@ -152,7 +158,17 @@ function App() {
         await leadersApi.create(leaderData);
       }
 
-      setLeaderForm({ name: '', startDate: '', endDate: '', birthDate: '', city: '', coffeeShop: '' });
+      setLeaderForm({ 
+        name: '', 
+        startDate: '', 
+        endDate: '', 
+        birthDate: '', 
+        city: '', 
+        coffeeShop: '',
+        pipName: '',
+        pipEndDate: '',
+        pipSuccessChance: ''
+      });
       setEditingLeader(null);
       setShowFormModal(false);
       loadData();
@@ -193,7 +209,10 @@ function App() {
       endDate: leader.endDate ? leader.endDate.split('T')[0] : '',
       birthDate: leader.birthDate.split('T')[0],
       city: leader.city,
-      coffeeShop: leader.coffeeShop
+      coffeeShop: leader.coffeeShop,
+      pipName: leader.pipName || '',
+      pipEndDate: leader.pipEndDate ? leader.pipEndDate.split('T')[0] : '',
+      pipSuccessChance: leader.pipSuccessChance ? leader.pipSuccessChance.toString() : ''
     });
     setEditingLeader(leader);
     setActiveTab('leader');
@@ -321,7 +340,17 @@ function App() {
             onClick={() => {
               setActiveTab('leader');
               setEditingLeader(null);
-              setLeaderForm({ name: '', startDate: '', endDate: '', birthDate: '', city: '', coffeeShop: '' });
+              setLeaderForm({ 
+                name: '', 
+                startDate: '', 
+                endDate: '', 
+                birthDate: '', 
+                city: '', 
+                coffeeShop: '',
+                pipName: '',
+                pipEndDate: '',
+                pipSuccessChance: ''
+              });
               setShowFormModal(true);
             }}
           >
@@ -375,6 +404,7 @@ function App() {
                     <th className="sortable" onClick={() => handleSort('endDate')}>
                       Дата увольнения {sortField === 'endDate' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </th>
+                    <th>PIP</th>
                     <th>Действия</th>
                   </tr>
                 </thead>
@@ -408,6 +438,37 @@ function App() {
                             {monthsWorked} мес.
                           </td>
                           <td>{leader.endDate ? new Date(leader.endDate).toLocaleDateString() : 'Работает'}</td>
+                          <td>
+                            {leader.pipName && (
+                              <div className={`pip-info ${
+                                leader.endDate ? 'pip-completed' : 
+                                leader.pipEndDate && new Date(leader.pipEndDate) < new Date() ? 'pip-at-risk' :
+                                'pip-in-progress'
+                              }`}>
+                                <div><strong>{leader.pipName}</strong></div>
+                                {leader.pipEndDate && (
+                                  <div>
+                                    <span className="pip-label">До: </span>
+                                    {new Date(leader.pipEndDate).toLocaleDateString()}
+                                    {!leader.endDate && new Date(leader.pipEndDate) < new Date() && (
+                                      <span className="pip-warning"> (просрочен)</span>
+                                    )}
+                                  </div>
+                                )}
+                                {leader.pipSuccessChance !== null && leader.pipSuccessChance !== undefined && (
+                                  <div>
+                                    <span className="pip-label">Шанс успеха: </span>
+                                    <span className={`pip-chance ${
+                                      leader.pipSuccessChance >= 70 ? 'pip-chance-high' :
+                                      leader.pipSuccessChance >= 30 ? 'pip-chance-medium' : 'pip-chance-low'
+                                    }`}>
+                                      {leader.pipSuccessChance}%
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </td>
                           <td>
                             <button className="action-btn edit-btn" onClick={() => editLeader(leader)}>
                               ✏️
@@ -539,6 +600,43 @@ function App() {
                         ))}
                     </select>
                   </div>
+                  
+                  <h3 className="form-section-title">План развития (PIP)</h3>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Название PIP</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={leaderForm.pipName}
+                      onChange={(e) => setLeaderForm({...leaderForm, pipName: e.target.value})}
+                      placeholder="Например: Улучшение показателей продаж"
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Дата окончания PIP</label>
+                    <input
+                      type="date"
+                      className="form-input"
+                      value={leaderForm.pipEndDate}
+                      onChange={(e) => setLeaderForm({...leaderForm, pipEndDate: e.target.value})}
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Вероятность успеха (%)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      className="form-input"
+                      value={leaderForm.pipSuccessChance}
+                      onChange={(e) => setLeaderForm({...leaderForm, pipSuccessChance: e.target.value})}
+                      placeholder="0-100"
+                    />
+                  </div>
+                  
                   <button type="submit" className="submit-btn">
                     {editingLeader ? 'Обновить Лидера' : 'Добавить Лидера'}
                   </button>

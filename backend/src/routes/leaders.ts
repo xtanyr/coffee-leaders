@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 
-const router = Router();
+export const router = Router();
 const prisma = new PrismaClient();
 
 // GET /api/leaders - Get all leaders
@@ -67,7 +67,17 @@ router.get('/stats', async (req, res) => {
 // POST /api/leaders - Create new leader
 router.post('/', async (req, res) => {
   try {
-    const { name, startDate, endDate, birthDate, city, coffeeShop } = req.body;
+    const { 
+      name, 
+      startDate, 
+      endDate, 
+      birthDate, 
+      city, 
+      coffeeShop,
+      pipName,
+      pipEndDate,
+      pipSuccessChance 
+    } = req.body;
 
     const leader = await prisma.leader.create({
       data: {
@@ -77,6 +87,9 @@ router.post('/', async (req, res) => {
         birthDate: new Date(birthDate),
         city,
         coffeeShop,
+        pipName: pipName || null,
+        pipEndDate: pipEndDate ? new Date(pipEndDate) : null,
+        pipSuccessChance: pipSuccessChance ? parseInt(pipSuccessChance) : null,
       },
     });
 
@@ -91,7 +104,17 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, startDate, endDate, birthDate, city, coffeeShop } = req.body;
+    const { 
+      name, 
+      startDate, 
+      endDate, 
+      birthDate, 
+      city, 
+      coffeeShop,
+      pipName,
+      pipEndDate,
+      pipSuccessChance 
+    } = req.body;
 
     const leader = await prisma.leader.update({
       where: { id: parseInt(id) },
@@ -102,6 +125,9 @@ router.put('/:id', async (req, res) => {
         birthDate: new Date(birthDate),
         city,
         coffeeShop,
+        pipName: pipName !== undefined ? pipName : undefined,
+        pipEndDate: pipEndDate !== undefined ? (pipEndDate ? new Date(pipEndDate) : null) : undefined,
+        pipSuccessChance: pipSuccessChance !== undefined ? (pipSuccessChance ? parseInt(pipSuccessChance) : null) : undefined,
       },
     });
 

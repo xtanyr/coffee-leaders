@@ -11,15 +11,20 @@ datasource db {
 }
 
 model Leader {
-  id         Int      @id @default(autoincrement())
-  name       String
-  startDate  DateTime
-  endDate    DateTime?
-  birthDate  DateTime
-  city       String
-  coffeeShop String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              Int      @id @default(autoincrement())
+  name            String
+  startDate       DateTime
+  endDate         DateTime?
+  birthDate       DateTime
+  city            String
+  coffeeShop      String
+  pipName         String?  @map("pip_name")
+  pipEndDate      DateTime? @map("pip_end_date")
+  pipSuccessChance Int?     @map("pip_success_chance")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("leaders")
 }
 
 model CoffeeShop {

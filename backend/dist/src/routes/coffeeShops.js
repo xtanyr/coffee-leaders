@@ -1,9 +1,12 @@
-import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
-const router = Router();
-const prisma = new PrismaClient();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.router = void 0;
+const express_1 = require("express");
+const client_1 = require("@prisma/client");
+exports.router = (0, express_1.Router)();
+const prisma = new client_1.PrismaClient();
 // GET /api/coffee-shops - Get all coffee shops
-router.get('/', async (req, res) => {
+exports.router.get('/', async (req, res) => {
     try {
         const coffeeShops = await prisma.coffeeShop.findMany({
             orderBy: { createdAt: 'desc' }
@@ -16,7 +19,7 @@ router.get('/', async (req, res) => {
     }
 });
 // GET /api/coffee-shops/city/:city - Get coffee shops by city
-router.get('/city/:city', async (req, res) => {
+exports.router.get('/city/:city', async (req, res) => {
     try {
         const { city } = req.params;
         const coffeeShops = await prisma.coffeeShop.findMany({
@@ -31,7 +34,7 @@ router.get('/city/:city', async (req, res) => {
     }
 });
 // POST /api/coffee-shops - Create new coffee shop
-router.post('/', async (req, res) => {
+exports.router.post('/', async (req, res) => {
     try {
         const { name, city, openingDate } = req.body;
         const coffeeShop = await prisma.coffeeShop.create({
@@ -49,7 +52,7 @@ router.post('/', async (req, res) => {
     }
 });
 // PUT /api/coffee-shops/:id - Update coffee shop
-router.put('/:id', async (req, res) => {
+exports.router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { name, city, openingDate } = req.body;
@@ -69,7 +72,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 // DELETE /api/coffee-shops/:id - Delete coffee shop
-router.delete('/:id', async (req, res) => {
+exports.router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         await prisma.coffeeShop.delete({
@@ -82,5 +85,5 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to delete coffee shop' });
     }
 });
-export default router;
+exports.default = exports.router;
 //# sourceMappingURL=coffeeShops.js.map

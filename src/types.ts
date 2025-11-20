@@ -6,6 +6,9 @@ export interface Leader {
   birthDate: string;
   city: string;
   coffeeShop: string;
+  pipName?: string | null;
+  pipEndDate?: string | null;
+  pipSuccessChance?: number | null;
   createdAt: string;
   updatedAt: string;
 }

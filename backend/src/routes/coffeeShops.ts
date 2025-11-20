@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 
-const router = Router();
+export const router = Router();
 const prisma = new PrismaClient();
 
 // GET /api/coffee-shops - Get all coffee shops
