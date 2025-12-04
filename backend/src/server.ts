@@ -1,8 +1,13 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import leadersRouter from './routes/leaders';
 import coffeeShopsRouter from './routes/coffeeShops';
+import auditRouter from './routes/audit';
+import analyticsRouter from './routes/analytics';
+
+dotenv.config();
 
 const app = express();
 const prisma = new PrismaClient();
@@ -15,6 +20,8 @@ app.use(express.json());
 // Routes
 app.use('/api/leaders', leadersRouter);
 app.use('/api/coffee-shops', coffeeShopsRouter);
+app.use('/api/audit', auditRouter);
+app.use('/api/analytics', analyticsRouter);
 
 // Health check
 app.get('/api/health', (req: any, res: any) => {

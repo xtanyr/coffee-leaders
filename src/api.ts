@@ -1,5 +1,12 @@
 import axios from 'axios';
-import { Leader, CoffeeShop, Stats } from './types';
+import {
+  Leader,
+  CoffeeShop,
+  Stats,
+  AuditEntry,
+  AttritionReport,
+  CalendarForecast,
+} from './types';
 
 const API_BASE_URL = 'http://localhost:3010/api';
 
@@ -31,4 +38,31 @@ export const coffeeShopsApi = {
   update: (id: number, coffeeShop: Partial<CoffeeShop>) =>
     api.put<CoffeeShop>(`/coffee-shops/${id}`, coffeeShop),
   delete: (id: number) => api.delete(`/coffee-shops/${id}`),
+};
+
+// Audit API
+export const auditApi = {
+  getEntries: (city?: string) =>
+    api.get<AuditEntry[]>(
+      '/audit',
+      city ? { params: { city } } : undefined
+    ),
+  getLatest: (city?: string) =>
+    api.get<AuditEntry | null>(
+      '/audit/latest',
+      city ? { params: { city } } : undefined
+    ),
+  create: (entry: { requiredLeaders: number; targetDate: string; city: string; note?: string }) =>
+    api.post<AuditEntry>('/audit', entry),
+};
+
+// Analytics API
+const ensureParams = (horizon?: number) =>
+  horizon ? { params: { horizon } } : undefined;
+
+export const analyticsApi = {
+  getAttritionReport: (horizon?: number) =>
+    api.get<AttritionReport | null>('/analytics/attrition', ensureParams(horizon)),
+  getCalendarForecast: (horizon?: number) =>
+    api.get<CalendarForecast | null>('/analytics/calendar', ensureParams(horizon)),
 };

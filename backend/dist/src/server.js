@@ -6,9 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.prisma = void 0;
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const dotenv_1 = __importDefault(require("dotenv"));
 const client_1 = require("@prisma/client");
 const leaders_1 = __importDefault(require("./routes/leaders"));
 const coffeeShops_1 = __importDefault(require("./routes/coffeeShops"));
+const audit_1 = __importDefault(require("./routes/audit"));
+const analytics_1 = __importDefault(require("./routes/analytics"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
 exports.prisma = prisma;
@@ -19,6 +23,8 @@ app.use(express_1.default.json());
 // Routes
 app.use('/api/leaders', leaders_1.default);
 app.use('/api/coffee-shops', coffeeShops_1.default);
+app.use('/api/audit', audit_1.default);
+app.use('/api/analytics', analytics_1.default);
 // Health check
 app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });

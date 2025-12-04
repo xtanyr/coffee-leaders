@@ -18,11 +18,15 @@
     "typescript": "^5.7.2",
     "web-vitals": "^4.2.4"
   },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start:all": "npx concurrently \"npm run dev --prefix backend\" \"npm start\""
   },
   "eslintConfig": {
     "extends": [
