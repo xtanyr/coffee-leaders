@@ -172,11 +172,28 @@ body {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .audit-summary-note-label {
   font-weight: 600;
   color: #071013ff;
+  white-space: nowrap;
+}
+
+.audit-summary-note > span:not(.audit-summary-note-label) {
+  flex: 1;
+  min-width: 0;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .analytics-section {
