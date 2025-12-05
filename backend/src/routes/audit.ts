@@ -59,4 +59,73 @@ router.post('/', async (req, res) => {
   }
 });
 
+// DELETE /api/audit/:id - delete audit entry
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const parsedId = parseInt(id, 10);
+    
+    if (isNaN(parsedId)) {
+      return res.status(400).json({ error: 'Invalid ID format' });
+    }
+
+    // Check if the entry exists
+    const existingEntry = await prisma.auditEntry.findUnique({
+      where: { id: parsedId }
+    });
+
+    if (!existingEntry) {
+      return res.status(404).json({ error: 'Audit entry not found' });
+    }
+
+    // Delete the entry
+    await prisma.auditEntry.delete({
+      where: { id: parsedId }
+    });
+
+    res.status(200).json({ message: 'Audit entry deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting audit entry:', error);
+    res.status(500).json({ error: 'Failed to delete audit entry' });
+  }
+});
+
+// PUT /api/audit/:id - update audit entry
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { requiredLeaders, targetDate, city, note } = req.body;
+    const parsedId = parseInt(id, 10);
+    
+    if (isNaN(parsedId)) {
+      return res.status(400).json({ error: 'Invalid ID format' });
+    }
+
+    // Check if the entry exists
+    const existingEntry = await prisma.auditEntry.findUnique({
+      where: { id: parsedId }
+    });
+
+    if (!existingEntry) {
+      return res.status(404).json({ error: 'Audit entry not found' });
+    }
+
+    // Update the entry
+    const updatedEntry = await prisma.auditEntry.update({
+      where: { id: parsedId },
+      data: {
+        ...(requiredLeaders !== undefined && { requiredLeaders: parseInt(requiredLeaders, 10) }),
+        ...(targetDate && { targetDate: new Date(targetDate) }),
+        ...(city && { city }),
+        ...(note !== undefined && { note: note || null })
+      }
+    });
+
+    res.json(updatedEntry);
+  } catch (error) {
+    console.error('Error updating audit entry:', error);
+    res.status(500).json({ error: 'Failed to update audit entry' });
+  }
+});
+
 export default router;
