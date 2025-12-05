@@ -10,8 +10,10 @@ module.exports = {
       ignore_watch: ["node_modules", "build", "coverage"],
       env: {
         NODE_ENV: "development",
-        PORT: 3000,
-        BROWSER: "none"
+        HOST: "0.0.0.0",
+        PORT: 3100,
+        BROWSER: "none",
+        PUBLIC_URL: "http://92.124.137.137:3100"
       },
       log_date_format: "YYYY-MM-DD HH:mm:ss",
       error_file: "logs/frontend-error.log",
@@ -27,7 +29,9 @@ module.exports = {
       ignore_watch: ["node_modules", "dist"],
       env: {
         NODE_ENV: "development",
-        PORT: 3011
+        HOST: "0.0.0.0",
+        PORT: 3011,
+        CORS_ORIGIN: "http://92.124.137.137:3100"
       },
       log_date_format: "YYYY-MM-DD HH:mm:ss",
       error_file: "../logs/backend-error.log",

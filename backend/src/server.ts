@@ -14,11 +14,14 @@ const prisma = new PrismaClient();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3010;
 
 // Middleware
-app.use(cors({
-  origin: '*',
+const corsOptions = {
+  origin: 'http://92.124.137.137:3100',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
