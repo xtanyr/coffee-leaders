@@ -15,7 +15,42 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 5000, // 5 second timeout
 });
+
+// Add request interceptor for logging
+api.interceptors.request.use(
+  config => {
+    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`, config.params || '');
+    return config;
+  },
+  error => {
+    console.error('[API] Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for error handling
+api.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      console.error('[API] Response error:', {
+        status: error.response.status,
+        data: error.response.data,
+        url: error.config?.url
+      });
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error('[API] No response received:', error.request);
+    } else {
+      // Something happened in setting up the request
+      console.error('[API] Request setup error:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Leaders API
 export const leadersApi = {
