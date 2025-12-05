@@ -3,6 +3,7 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
+  table-layout: fixed;
 }
 
 .audit-table th,
@@ -11,7 +12,18 @@
   text-align: left;
   border-bottom: 1px solid #e2e8f0;
   vertical-align: top;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
 }
+
+.audit-table th:nth-child(1) { width: 15%; }
+.audit-table th:nth-child(2) { width: 15%; }
+.audit-table th:nth-child(3) { width: 15%; }
+.audit-table th:nth-child(4) { width: 20%; }
+.audit-table th:nth-child(5) { width: 25%; }
+.audit-table th:nth-child(6) { width: 10%; }
 
 .audit-table th {
   background-color: #f8fafc;
@@ -139,6 +151,15 @@ textarea.form-input-sm {
   width: 1%;
 }
 
+/* Comment Cell */
+.comment-cell {
+  max-width: 300px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal !important;
+}
+
 /* Responsive Table */
 .audit-table-wrapper {
   overflow-x: auto;
@@ -146,6 +167,7 @@ textarea.form-input-sm {
   margin: 1rem 0;
   border-radius: 0.5rem;
   border: 1px solid #e2e8f0;
+  max-width: 100%;
 }
 
 /* Empty State */

@@ -1109,7 +1109,7 @@ function App() {
                           <td>{entry.requiredLeaders}</td>
                           <td>{formatDate(entry.targetDate)}</td>
                           <td>{formatDateTime(entry.createdAt)}</td>
-                          <td style={{ whiteSpace: 'pre-wrap' }}>{entry.note || '—'}</td>
+                          <td className="comment-cell">{entry.note || '—'}</td>
                           <td className="actions-cell">
                             <button
                               className="btn btn-sm btn-primary"
