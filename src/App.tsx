@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import './App.css';
+import './audit-styles.css';
 import {
   Leader,
   CoffeeShop,
@@ -183,6 +184,13 @@ function App() {
     note: ''
   });
   const [isSubmittingAudit, setIsSubmittingAudit] = useState(false);
+  const [editingAuditId, setEditingAuditId] = useState<number | null>(null);
+  const [editingAudit, setEditingAudit] = useState<{
+    requiredLeaders: string;
+    targetDate: string;
+    city: string;
+    note: string;
+  } | null>(null);
 
   useEffect(() => {
     loadData();
@@ -247,6 +255,50 @@ function App() {
       setAuditEntries(entriesRes.data);
     } catch (error) {
       console.error('Error loading audit entries:', error);
+    } finally {
+      setEditingAuditId(null);
+      setEditingAudit(null);
+    }
+  };
+
+  const handleEditAudit = (entry: AuditEntry) => {
+    setEditingAuditId(entry.id);
+    setEditingAudit({
+      requiredLeaders: entry.requiredLeaders.toString(),
+      targetDate: entry.targetDate.split('T')[0],
+      city: entry.city,
+      note: entry.note || ''
+    });
+  };
+
+  const handleUpdateAudit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingAuditId || !editingAudit) return;
+
+    try {
+      setIsSubmittingAudit(true);
+      await auditApi.update(editingAuditId, {
+        requiredLeaders: parseInt(editingAudit.requiredLeaders, 10),
+        targetDate: editingAudit.targetDate,
+        city: editingAudit.city,
+        note: editingAudit.note || null
+      });
+      await refreshAuditEntries();
+    } catch (error) {
+      console.error('Error updating audit entry:', error);
+    } finally {
+      setIsSubmittingAudit(false);
+    }
+  };
+
+  const handleDeleteAudit = async (id: number) => {
+    if (!window.confirm('Вы уверены, что хотите удалить эту запись?')) return;
+    
+    try {
+      await auditApi.delete(id);
+      await refreshAuditEntries();
+    } catch (error) {
+      console.error('Error deleting audit entry:', error);
     }
   };
 
@@ -984,17 +1036,96 @@ function App() {
                     <th>Лидеров требуется</th>
                     <th>К дате</th>
                     <th>Создано</th>
-                    <th>Комментарий</th>
+                    <th style={{ minWidth: '300px' }}>Комментарий</th>
+                    <th>Действия</th>
                   </tr>
                 </thead>
                 <tbody>
                   {displayedAuditEntries.map(entry => (
                     <tr key={entry.id}>
-                      <td>{entry.city}</td>
-                      <td>{entry.requiredLeaders}</td>
-                      <td>{formatDate(entry.targetDate)}</td>
-                      <td>{formatDateTime(entry.createdAt)}</td>
-                      <td>{entry.note || '—'}</td>
+                      {editingAuditId === entry.id && editingAudit ? (
+                        <>
+                          <td>
+                            <select
+                              className="form-select form-select-sm"
+                              value={editingAudit.city}
+                              onChange={(e) => setEditingAudit({...editingAudit, city: e.target.value})}
+                            >
+                              {CITIES.map(city => (
+                                <option key={city} value={city}>{city}</option>
+                              ))}
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              className="form-input form-input-sm"
+                              value={editingAudit.requiredLeaders}
+                              onChange={(e) => setEditingAudit({...editingAudit, requiredLeaders: e.target.value})}
+                              min="1"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="date"
+                              className="form-input form-input-sm"
+                              value={editingAudit.targetDate}
+                              onChange={(e) => setEditingAudit({...editingAudit, targetDate: e.target.value})}
+                            />
+                          </td>
+                          <td>{formatDateTime(entry.createdAt)}</td>
+                          <td>
+                            <textarea
+                              className="form-input form-input-sm"
+                              value={editingAudit.note}
+                              onChange={(e) => setEditingAudit({...editingAudit, note: e.target.value})}
+                              rows={2}
+                              style={{ width: '100%' }}
+                            />
+                          </td>
+                          <td className="actions-cell">
+                            <button
+                              className="btn btn-sm btn-success"
+                              onClick={handleUpdateAudit}
+                              disabled={isSubmittingAudit}
+                            >
+                              {isSubmittingAudit ? 'Сохранение...' : 'Сохранить'}
+                            </button>
+                            <button
+                              className="btn btn-sm btn-secondary ml-1"
+                              onClick={() => {
+                                setEditingAuditId(null);
+                                setEditingAudit(null);
+                              }}
+                              disabled={isSubmittingAudit}
+                            >
+                              Отмена
+                            </button>
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td>{entry.city}</td>
+                          <td>{entry.requiredLeaders}</td>
+                          <td>{formatDate(entry.targetDate)}</td>
+                          <td>{formatDateTime(entry.createdAt)}</td>
+                          <td style={{ whiteSpace: 'pre-wrap' }}>{entry.note || '—'}</td>
+                          <td className="actions-cell">
+                            <button
+                              className="btn btn-sm btn-primary"
+                              onClick={() => handleEditAudit(entry)}
+                            >
+                              Изменить
+                            </button>
+                            <button
+                              className="btn btn-sm btn-danger ml-1"
+                              onClick={() => handleDeleteAudit(entry.id)}
+                            >
+                              Удалить
+                            </button>
+                          </td>
+                        </>
+                      )}
                     </tr>
                   ))}
                 </tbody>

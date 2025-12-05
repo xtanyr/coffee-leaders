@@ -8,7 +8,7 @@ import {
   CalendarForecast,
 } from './types';
 
-const API_BASE_URL = 'http://localhost:3010/api';
+const API_BASE_URL = 'http://10.0.0.210:3011/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -89,6 +89,9 @@ export const auditApi = {
     ),
   create: (entry: { requiredLeaders: number; targetDate: string; city: string; note?: string }) =>
     api.post<AuditEntry>('/audit', entry),
+  update: (id: number, entry: { requiredLeaders?: number; targetDate?: string; city?: string; note?: string | null }) =>
+    api.put<AuditEntry>(`/audit/${id}`, entry),
+  delete: (id: number) => api.delete(`/audit/${id}`),
 };
 
 // Analytics API
