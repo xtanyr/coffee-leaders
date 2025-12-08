@@ -4,6 +4,13 @@ import { PrismaClient } from '@prisma/client';
 export const router = Router();
 const prisma = new PrismaClient();
 
+// Helper function to handle BigInt serialization
+const replacer = (key: string, value: any) => 
+  typeof value === 'bigint' ? value.toString() : value;
+
+const sendJson = (res: any, data: any) => 
+  res.type('application/json').send(JSON.stringify(data, replacer));
+
 // GET /api/audit - list audit entries (latest first)
 router.get('/', async (req, res) => {
   try {
@@ -12,7 +19,7 @@ router.get('/', async (req, res) => {
       where: city ? { city } : undefined,
       orderBy: { createdAt: 'desc' }
     });
-    res.json(entries);
+    sendJson(res, entries);
   } catch (error) {
     console.error('Error fetching audit entries:', error);
     res.status(500).json({ error: 'Failed to fetch audit entries' });
@@ -27,7 +34,7 @@ router.get('/latest', async (req, res) => {
       where: city ? { city } : undefined,
       orderBy: { createdAt: 'desc' }
     });
-    res.json(latestEntry);
+    sendJson(res, latestEntry);
   } catch (error) {
     console.error('Error fetching latest audit entry:', error);
     res.status(500).json({ error: 'Failed to fetch latest audit entry' });
