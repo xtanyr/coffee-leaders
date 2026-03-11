@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import './App.css';
 import './audit-styles.css';
 import {
@@ -127,8 +127,6 @@ function App() {
     });
   }, [calendarForecast, currentCityFilter, selectedCityLabel]);
 
-  const calendarCardsToRender = calendarCards.slice(0, 6);
-
   const getProbabilityForWindow = (leader: LeaderAttritionInsight, months: number) =>
     leader.probabilities
       .filter(prob => prob.monthIndex <= months)
@@ -142,14 +140,6 @@ function App() {
     if (value >= 0.25) return 'medium';
     return 'low';
   };
-
-  const formatDecimal = (value: number) => (value < 1 ? value.toFixed(2) : value.toFixed(1));
-
-  const formatMonthRange = (start: string) =>
-    new Date(start).toLocaleDateString('ru-RU', {
-      month: 'long',
-      year: 'numeric',
-    });
 
   // Form states
   const [editingLeader, setEditingLeader] = useState<Leader | null>(null);
@@ -165,7 +155,8 @@ function App() {
     coffeeShop: '',
     pipName: '',
     pipEndDate: '',
-    pipSuccessChance: ''
+    pipSuccessChance: '',
+    manualAttritionRisk: ''
   });
   const hasPipValues = Boolean(
     leaderForm.pipName || leaderForm.pipEndDate || leaderForm.pipSuccessChance
@@ -192,9 +183,44 @@ function App() {
     note: string;
   } | null>(null);
 
+  const fetchAnalytics = useCallback(async () => {
+    setIsLoadingAnalytics(true);
+    setAnalyticsError(null);
+    try {
+      const [reportRes, calendarRes] = await Promise.all([
+        analyticsApi.getAttritionReport(ANALYTICS_HORIZON_MONTHS),
+        analyticsApi.getCalendarForecast(ANALYTICS_HORIZON_MONTHS),
+      ]);
+      setAttritionReport(reportRes.data ?? null);
+      setCalendarForecast(calendarRes.data ?? null);
+    } catch (error) {
+      console.error('Error loading analytics:', error);
+      setAnalyticsError('Не удалось загрузить аналитические данные. Попробуйте позже.');
+    } finally {
+      setIsLoadingAnalytics(false);
+    }
+  }, []);
+
+  const loadData = useCallback(async () => {
+    try {
+      const [leadersRes, coffeeShopsRes, auditEntriesRes] = await Promise.all([
+        leadersApi.getAll(),
+        coffeeShopsApi.getAll(),
+        auditApi.getEntries()
+      ]);
+
+      setLeaders(leadersRes.data);
+      setCoffeeShops(coffeeShopsRes.data);
+      setAuditEntries(auditEntriesRes.data);
+      fetchAnalytics();
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  }, [fetchAnalytics]);
+
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -213,41 +239,6 @@ function App() {
       console.warn('Не удалось сохранить состояние фильтра активных лидеров', error);
     }
   }, [showOnlyActive]);
-
-  const loadData = async () => {
-    try {
-      const [leadersRes, coffeeShopsRes, auditEntriesRes] = await Promise.all([
-        leadersApi.getAll(),
-        coffeeShopsApi.getAll(),
-        auditApi.getEntries()
-      ]);
-
-      setLeaders(leadersRes.data);
-      setCoffeeShops(coffeeShopsRes.data);
-      setAuditEntries(auditEntriesRes.data);
-      fetchAnalytics();
-    } catch (error) {
-      console.error('Error loading data:', error);
-    }
-  };
-
-  const fetchAnalytics = async () => {
-    setIsLoadingAnalytics(true);
-    setAnalyticsError(null);
-    try {
-      const [reportRes, calendarRes] = await Promise.all([
-        analyticsApi.getAttritionReport(ANALYTICS_HORIZON_MONTHS),
-        analyticsApi.getCalendarForecast(ANALYTICS_HORIZON_MONTHS),
-      ]);
-      setAttritionReport(reportRes.data ?? null);
-      setCalendarForecast(calendarRes.data ?? null);
-    } catch (error) {
-      console.error('Error loading analytics:', error);
-      setAnalyticsError('Не удалось загрузить аналитические данные. Попробуйте позже.');
-    } finally {
-      setIsLoadingAnalytics(false);
-    }
-  };
 
   const refreshAuditEntries = async () => {
     try {
@@ -420,6 +411,13 @@ function App() {
     }));
   };
 
+  const clearAttritionRisk = () => {
+    setLeaderForm((prev) => ({
+      ...prev,
+      manualAttritionRisk: ''
+    }));
+  };
+
   const handleLeaderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -437,6 +435,17 @@ function App() {
           return Math.max(0, Math.min(100, parsed));
         })();
 
+    const manualRiskInput = leaderForm.manualAttritionRisk.trim();
+    const manualRiskValue = manualRiskInput === ''
+      ? null
+      : (() => {
+          const parsed = parseFloat(manualRiskInput);
+          if (Number.isNaN(parsed)) {
+            return null;
+          }
+          return Math.max(0, Math.min(1, parsed));
+        })();
+
     const leaderData = {
       name: leaderForm.name,
       startDate: leaderForm.startDate,
@@ -446,7 +455,8 @@ function App() {
       coffeeShop: leaderForm.coffeeShop,
       pipName: pipNameValue,
       pipEndDate: pipEndDateValue,
-      pipSuccessChance: pipSuccessValue
+      pipSuccessChance: pipSuccessValue,
+      manualAttritionRisk: manualRiskValue
     };
 
     try {
@@ -465,7 +475,8 @@ function App() {
         coffeeShop: '',
         pipName: '',
         pipEndDate: '',
-        pipSuccessChance: ''
+        pipSuccessChance: '',
+        manualAttritionRisk: ''
       });
       setEditingLeader(null);
       setShowFormModal(false);
@@ -513,6 +524,10 @@ function App() {
       pipSuccessChance:
         leader.pipSuccessChance !== null && leader.pipSuccessChance !== undefined
           ? leader.pipSuccessChance.toString()
+          : '',
+      manualAttritionRisk:
+        leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined
+          ? leader.manualAttritionRisk.toString()
           : ''
     });
     setEditingLeader(leader);
@@ -532,7 +547,10 @@ function App() {
   };
 
   const deleteLeader = async (id: number) => {
-    if (window.confirm('Вы уверены, что хотите удалить этого лидера?')) {
+    const leader = leaders.find(l => l.id === id);
+    const leaderName = leader ? leader.name : 'этого лидера';
+    
+    if (window.confirm(`Вы уверены, что хотите удалить лидера "${leaderName}"?\n\nВнимание: это действие полностью удалит запись о лидере из системы, включая всю историю и связанные данные.`)) {
       try {
         await leadersApi.delete(id);
         loadData();
@@ -784,7 +802,8 @@ function App() {
                 coffeeShop: '',
                 pipName: '',
                 pipEndDate: '',
-                pipSuccessChance: ''
+                pipSuccessChance: '',
+                manualAttritionRisk: ''
               });
               setShowFormModal(true);
             }}
@@ -868,6 +887,12 @@ function App() {
 
                       const attrition = attritionByLeader.get(leader.id);
                       const probability3 = attrition ? getProbabilityForWindow(attrition, 3) : null;
+                      
+                      // Определяем, какое значение показывать: ручное или автоматическое
+                      const displayValue = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
+                        ? leader.manualAttritionRisk 
+                        : probability3;
+                      const isManual = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined;
 
                       return (
                         <tr key={leader.id}>
@@ -879,9 +904,23 @@ function App() {
                             {monthsWorked} мес.
                           </td>
                           <td>{leader.endDate ? new Date(leader.endDate).toLocaleDateString() : 'Работает'}</td>
-                          <td className={`attrition-cell ${attrition && probability3 !== null ? 'probability-' + probabilityLevel(probability3) : ''}`}>
+                          <td className={`attrition-cell ${displayValue !== null ? 'probability-' + probabilityLevel(displayValue) : ''}`}>
                             <div className="attrition-cell-values">
-                              <span>{formatProbability(probability3)}</span>
+                              <span 
+                                className={isManual ? 'manual-value' : 'auto-value'}
+                                title={isManual ? 'Ручное значение (нажмите для редактирования)' : 'Автоматически рассчитанное значение (нажмите для редактирования)'}
+                                onClick={() => {
+                                  // Открыть модальное окно редактирования с текущим значением
+                                  editLeader(leader);
+                                }}
+                                style={{ 
+                                  cursor: 'pointer',
+                                  color: isManual ? 'black' : 'gray',
+                                  fontWeight: isManual ? 'bold' : 'normal'
+                                }}
+                              >
+                                {formatProbability(displayValue)}
+                              </span>
                             </div>
                           </td>
                           <td>
@@ -903,7 +942,7 @@ function App() {
                                 )}
                                 {leader.pipSuccessChance !== null && leader.pipSuccessChance !== undefined && (
                                   <div>
-                                    <span className="pip-label">Шанс успеха: </span>
+                                    <span className="pip-label">Вероятность неудачи: </span>
                                     <span className={`pip-chance ${
                                       leader.pipSuccessChance >= 70 ? 'pip-chance-high' :
                                       leader.pipSuccessChance >= 30 ? 'pip-chance-medium' : 'pip-chance-low'
@@ -919,7 +958,11 @@ function App() {
                             <button className="action-btn edit-btn" onClick={() => editLeader(leader)}>
                               ✏️
                             </button>
-                            <button className="action-btn delete-btn" onClick={() => deleteLeader(leader.id)}>
+                            <button 
+                              className="action-btn delete-btn" 
+                              onClick={() => deleteLeader(leader.id)}
+                              title="Удалить лидера из системы"
+                            >
                               🗑️
                             </button>
                           </td>
@@ -1227,7 +1270,7 @@ function App() {
                   <h3 className="form-section-title">План развития (PIP)</h3>
                   
                   <div className="form-group">
-                    <label className="form-label">Название PIP</label>
+                    <label className="form-label">Ссылка на PIP</label>
                     <input
                       type="text"
                       className="form-input"
@@ -1248,7 +1291,7 @@ function App() {
                   </div>
                   
                   <div className="form-group">
-                    <label className="form-label">Вероятность успеха (%)</label>
+                    <label className="form-label">Вероятность неудачи (%)</label>
                     <input
                       type="number"
                       min="0"
@@ -1268,6 +1311,37 @@ function App() {
                       disabled={!hasPipValues}
                     >
                       Удалить PIP
+                    </button>
+                  </div>
+                  
+                  <h3 className="form-section-title">Риск ухода (экспертная оценка)</h3>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Риск ухода (0-1)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      className="form-input"
+                      value={leaderForm.manualAttritionRisk}
+                      onChange={(e) => setLeaderForm({...leaderForm, manualAttritionRisk: e.target.value})}
+                      placeholder="Оставьте пустым для автоматического расчета"
+                    />
+                    <small className="form-hint">
+                      Введите значение от 0 до 1 (например, 0.25 для 25%). 
+                      Оставьте поле пустым, чтобы использовать автоматически рассчитанный риск.
+                    </small>
+                  </div>
+
+                  <div className="risk-actions">
+                    <button
+                      type="button"
+                      className="risk-clear-btn"
+                      onClick={clearAttritionRisk}
+                      disabled={!leaderForm.manualAttritionRisk}
+                    >
+                      Вернуть автоматический расчет
                     </button>
                   </div>
                   

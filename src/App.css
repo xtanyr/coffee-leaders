@@ -1109,3 +1109,86 @@ body {
     padding: 20px;
   }
 }
+
+/* Manual/Auto attrition risk styles */
+.manual-value {
+  color: black !important;
+  font-weight: bold;
+}
+
+.auto-value {
+  color: gray !important;
+  font-weight: normal;
+}
+
+.attrition-cell span:hover {
+  text-decoration: underline;
+}
+
+/* Form section for risk */
+.form-section-title {
+  margin: 30px 0 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #59c9a5ff;
+  color: #071013ff;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-hint {
+  display: block;
+  margin-top: 5px;
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.risk-actions {
+  margin-top: 10px;
+}
+
+.pip-clear-btn {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #6c757d;
+  padding: 12px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.pip-clear-btn:hover:not(:disabled) {
+  background: #e9ecef;
+  border-color: #adb5bd;
+  color: #495057;
+}
+
+.pip-clear-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.risk-clear-btn {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #6c757d;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.risk-clear-btn:hover:not(:disabled) {
+  background: #e9ecef;
+  border-color: #adb5bd;
+  color: #495057;
+}
+
+.risk-clear-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
