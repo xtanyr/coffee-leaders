@@ -930,7 +930,30 @@ function App() {
                                 leader.pipEndDate && new Date(leader.pipEndDate) < new Date() ? 'pip-at-risk' :
                                 'pip-in-progress'
                               }`}>
-                                <div><strong>{leader.pipName}</strong></div>
+                                <div>
+                                <strong 
+                                  className={leader.pipName ? 'pip-link' : ''}
+                                  onClick={() => {
+                                    if (leader.pipName) {
+                                      // Проверяем, является ли значение URL
+                                      if (leader.pipName.startsWith('http://') || leader.pipName.startsWith('https://')) {
+                                        window.open(leader.pipName, '_blank', 'noopener,noreferrer');
+                                      } else {
+                                        // Если не URL, ищем в Google Таблицах
+                                        const searchQuery = encodeURIComponent(`PIP ${leader.pipName} ${leader.name}`);
+                                        window.open(`https://docs.google.com/spreadsheets/?q=${searchQuery}`, '_blank', 'noopener,noreferrer');
+                                      }
+                                    }
+                                  }}
+                                  title={leader.pipName ? `Открыть PIP для ${leader.name}` : 'Нет PIP'}
+                                  style={{ 
+                                    cursor: leader.pipName ? 'pointer' : 'default',
+                                    textDecoration: leader.pipName ? 'underline' : 'none'
+                                  }}
+                                >
+                                  {leader.pipName || '—'}
+                                </strong>
+                              </div>
                                 {leader.pipEndDate && (
                                   <div>
                                     <span className="pip-label">До: </span>

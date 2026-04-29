@@ -1110,6 +1110,19 @@ body {
   }
 }
 
+/* PIP link styles */
+.pip-link {
+  color: #007bff !important;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pip-link:hover {
+  color: #0056b3 !important;
+  text-decoration: none;
+}
+
 /* Manual/Auto attrition risk styles */
 .manual-value {
   color: black !important;
