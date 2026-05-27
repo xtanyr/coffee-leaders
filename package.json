@@ -20,15 +20,16 @@
   },
   "devDependencies": {
     "concurrently": "^9.0.1",
+    "dotenv": "^16.6.1",
     "react-app-rewired": "^2.2.1"
   },
   "scripts": {
-    "start": "set HOST=0.0.0.0 && set PORT=3100 && set PUBLIC_URL=http://92.124.137.137:3100 && react-app-rewired start",
+    "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "dev:frontend": "set PORT=3100 && react-app-rewired start",
+    "dev:frontend": "react-app-rewired start",
     "dev:backend": "cd backend && npm run dev",
     "start:all": "pm2 start ecosystem.config.js",
     "stop:all": "pm2 delete ecosystem.config.js",

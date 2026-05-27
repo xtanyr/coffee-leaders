@@ -79,6 +79,7 @@ function App() {
   const [calendarForecast, setCalendarForecast] = useState<CalendarForecast | null>(null);
   const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
   const [analyticsError, setAnalyticsError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const selectedCityLabel = currentCityFilter ? `для ${currentCityFilter}` : 'по всем городам';
 
@@ -202,6 +203,7 @@ function App() {
   }, []);
 
   const loadData = useCallback(async () => {
+    setLoadError(null);
     try {
       const [leadersRes, coffeeShopsRes, auditEntriesRes] = await Promise.all([
         leadersApi.getAll(),
@@ -215,6 +217,9 @@ function App() {
       fetchAnalytics();
     } catch (error) {
       console.error('Error loading data:', error);
+      setLoadError(
+        'Не удалось загрузить данные. Убедитесь, что backend запущен (порт 3011), и перезапустите frontend.'
+      );
     }
   }, [fetchAnalytics]);
 
@@ -583,6 +588,12 @@ function App() {
       <header className="header">
         <h1 className="title">Лидеры Кофеен</h1>
       </header>
+
+      {loadError && (
+        <div className="analytics-error" role="alert">
+          {loadError}
+        </div>
+      )}
 
       <div className="city-filter">
         <button

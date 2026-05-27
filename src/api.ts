@@ -8,14 +8,16 @@ import {
   CalendarForecast,
 } from './types';
 
-const API_BASE_URL = 'http://92.124.137.137:3011/api';
+// Relative /api is proxied to the backend by src/setupProxy.js (dev server / pm2 on same host).
+// Override with REACT_APP_API_URL when serving a static build behind another reverse proxy.
+const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 5000, // 5 second timeout
+  timeout: 30000,
 });
 
 // Add request interceptor for logging
@@ -42,8 +44,11 @@ api.interceptors.response.use(
         url: error.config?.url
       });
     } else if (error.request) {
-      // The request was made but no response was received
-      console.error('[API] No response received:', error.request);
+      const hint =
+        error.code === 'ECONNABORTED'
+          ? 'Request timed out — is the backend running?'
+          : 'No response — is the backend reachable?';
+      console.error(`[API] ${hint}`, error.message);
     } else {
       // Something happened in setting up the request
       console.error('[API] Request setup error:', error.message);

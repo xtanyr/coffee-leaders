@@ -1,6 +1,22 @@
-# Getting Started with Create React App
+# Coffee Leaders
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Configuration
+
+Copy environment templates and adjust for your machine or server:
+
+```bash
+cp .env.example .env
+cp backend/.env.example backend/.env
+```
+
+| Variable | Purpose |
+|----------|---------|
+| `PORT` | Frontend dev server port (default `3100`) |
+| `PUBLIC_URL` | Optional public URL when not using `localhost` |
+| `CORS_ORIGIN` | Comma-separated origins allowed to call the API |
+| `BACKEND_PORT` / `REACT_APP_API_PROXY` | Where `/api` is proxied in development |
+
+The frontend uses relative `/api` URLs (no hardcoded host). On a VPS, set `PUBLIC_URL` and `CORS_ORIGIN` to the URL users open in the browser, e.g. `http://your-host:3100`.
 
 ## Available Scripts
 
