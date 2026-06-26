@@ -76,7 +76,8 @@ router.post('/', async (req, res) => {
       coffeeShop,
       pipName,
       pipEndDate,
-      pipSuccessChance 
+      pipSuccessChance,
+      manualAttritionRisk 
     } = req.body;
 
     const leader = await prisma.leader.create({
@@ -90,6 +91,7 @@ router.post('/', async (req, res) => {
         pipName: pipName || null,
         pipEndDate: pipEndDate ? new Date(pipEndDate) : null,
         pipSuccessChance: pipSuccessChance ? parseInt(pipSuccessChance) : null,
+        ...(manualAttritionRisk !== undefined && { manualAttritionRisk: manualAttritionRisk !== null ? parseFloat(manualAttritionRisk) : null }),
       },
     });
 
@@ -113,7 +115,8 @@ router.put('/:id', async (req, res) => {
       coffeeShop,
       pipName,
       pipEndDate,
-      pipSuccessChance 
+      pipSuccessChance,
+      manualAttritionRisk 
     } = req.body;
 
     const leader = await prisma.leader.update({
@@ -128,6 +131,7 @@ router.put('/:id', async (req, res) => {
         pipName: pipName !== undefined ? pipName : undefined,
         pipEndDate: pipEndDate !== undefined ? (pipEndDate ? new Date(pipEndDate) : null) : undefined,
         pipSuccessChance: pipSuccessChance !== undefined ? (pipSuccessChance ? parseInt(pipSuccessChance) : null) : undefined,
+        ...(manualAttritionRisk !== undefined && { manualAttritionRisk: manualAttritionRisk !== null ? parseFloat(manualAttritionRisk) : null }),
       },
     });
 

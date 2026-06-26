@@ -684,6 +684,21 @@ function App() {
           <div className="metric-number">{pipLeadersCount}</div>
           <div className="metric-label">На PIP {currentCityFilter ? `в ${currentCityFilter}` : 'в компании'}</div>
         </div>
+        <div className="metric-card">
+          <div className="metric-number">{(() => {
+            if (!attritionReport) return '—';
+            return attritionReport.expectedAttritions
+              .filter(entry => entry.monthIndex <= 3)
+              .reduce((sum, entry) => {
+                if (!currentCityFilter || entry.city === currentCityFilter) {
+                  return sum + entry.expectedDepartures;
+                }
+                return sum;
+              }, 0)
+              .toFixed(1);
+          })()}</div>
+          <div className="metric-label">Мат. ожидание уходов за 3 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
+        </div>
       </div>
 
       <div className="audit-summary">

@@ -65,7 +65,7 @@ exports.router.get('/stats', async (req, res) => {
 // POST /api/leaders - Create new leader
 exports.router.post('/', async (req, res) => {
     try {
-        const { name, startDate, endDate, birthDate, city, coffeeShop, pipName, pipEndDate, pipSuccessChance } = req.body;
+        const { name, startDate, endDate, birthDate, city, coffeeShop, pipName, pipEndDate, pipSuccessChance, manualAttritionRisk } = req.body;
         const leader = await prisma.leader.create({
             data: {
                 name,
@@ -77,6 +77,7 @@ exports.router.post('/', async (req, res) => {
                 pipName: pipName || null,
                 pipEndDate: pipEndDate ? new Date(pipEndDate) : null,
                 pipSuccessChance: pipSuccessChance ? parseInt(pipSuccessChance) : null,
+                ...(manualAttritionRisk !== undefined && { manualAttritionRisk: manualAttritionRisk !== null ? parseFloat(manualAttritionRisk) : null }),
             },
         });
         res.status(201).json(leader);
@@ -90,7 +91,7 @@ exports.router.post('/', async (req, res) => {
 exports.router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, startDate, endDate, birthDate, city, coffeeShop, pipName, pipEndDate, pipSuccessChance } = req.body;
+        const { name, startDate, endDate, birthDate, city, coffeeShop, pipName, pipEndDate, pipSuccessChance, manualAttritionRisk } = req.body;
         const leader = await prisma.leader.update({
             where: { id: parseInt(id) },
             data: {
@@ -103,6 +104,7 @@ exports.router.put('/:id', async (req, res) => {
                 pipName: pipName !== undefined ? pipName : undefined,
                 pipEndDate: pipEndDate !== undefined ? (pipEndDate ? new Date(pipEndDate) : null) : undefined,
                 pipSuccessChance: pipSuccessChance !== undefined ? (pipSuccessChance ? parseInt(pipSuccessChance) : null) : undefined,
+                ...(manualAttritionRisk !== undefined && { manualAttritionRisk: manualAttritionRisk !== null ? parseFloat(manualAttritionRisk) : null }),
             },
         });
         res.json(leader);
