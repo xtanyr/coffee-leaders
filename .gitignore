@@ -28,3 +28,9 @@ yarn-debug.log*
 yarn-error.log*
 backend/node_modules
 backend/tsconfig.tsbuildinfo
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
