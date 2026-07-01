@@ -59,7 +59,8 @@ router.post('/', async (req, res) => {
       }
     });
 
-    res.status(201).json(entry);
+    res.status(201);
+    sendJson(res, entry);
   } catch (error) {
     console.error('Error creating audit entry:', error);
     res.status(500).json({ error: 'Failed to create audit entry' });
@@ -128,7 +129,7 @@ router.put('/:id', async (req, res) => {
       }
     });
 
-    res.json(updatedEntry);
+    sendJson(res, updatedEntry);
   } catch (error) {
     console.error('Error updating audit entry:', error);
     res.status(500).json({ error: 'Failed to update audit entry' });
