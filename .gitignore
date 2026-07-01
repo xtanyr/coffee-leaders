@@ -11,8 +11,6 @@
 # production
 /build
 backend/dist
-backend/prisma/dev.db
-backend/prisma/prisma/dev.db
 
 # misc
 .DS_Store
