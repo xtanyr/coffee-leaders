@@ -614,17 +614,58 @@ function App() {
         ))}
       </div>
 
-      {(analyticsError || isLoadingAnalytics) && (
-        <section className="analytics-section">
-          <h2 className="section-title">Прогноз ухода лидеров</h2>
-          {analyticsError && (
-            <div className="analytics-error">{analyticsError}</div>
-          )}
-          {isLoadingAnalytics && (
-            <div className="analytics-loading">Загружаем прогнозы…</div>
-          )}
-        </section>
-      )}
+      <section className="analytics-section">
+        <h2 className="section-title">Прогноз ухода лидеров</h2>
+        {analyticsError && (
+          <div className="analytics-error">{analyticsError}</div>
+        )}
+        {isLoadingAnalytics && (
+          <div className="analytics-loading">Загружаем прогнозы…</div>
+        )}
+        {!isLoadingAnalytics && !analyticsError && calendarForecast && (
+          <div className="calendar-section">
+            <div className="calendar-grid">
+              {calendarCards.map(card => (
+                <div className="calendar-card" key={card.monthKey}>
+                  <div className="calendar-card-header">
+                    <div className="calendar-card-month">{card.label}</div>
+                    <div className="calendar-card-range">{card.startDate} — {card.endDate}</div>
+                  </div>
+                  <div className="calendar-metrics">
+                    <div>
+                      <span className="calendar-label">Ожидание уходов</span>
+                      {card.expectedAttritions.toFixed(1)}
+                    </div>
+                    <div>
+                      <span className="calendar-label">Плановые открытия</span>
+                      {card.plannedOpenings}
+                    </div>
+                    <div>
+                      <span className="calendar-label">Нужно лидеров</span>
+                      {card.netLeadersNeeded}
+                    </div>
+                  </div>
+                  <div className="calendar-cities">
+                    {card.cities.map(city => (
+                      <div className="calendar-city-row" key={city.city}>
+                        <div className="calendar-city-name">{city.city}</div>
+                        <div className="calendar-city-values">
+                          <span>Уходы: {city.expectedAttritions.toFixed(1)}</span>
+                          <span>Открытия: {city.plannedOpenings}</span>
+                          <span>Нужно: {city.netLeadersNeeded}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {!isLoadingAnalytics && !analyticsError && !calendarForecast && (
+          <div className="analytics-empty">Прогнозы пока не рассчитаны</div>
+        )}
+      </section>
 
       <div className="metrics-grid">
         <div className="metric-card">
@@ -698,6 +739,51 @@ function App() {
               .toFixed(1);
           })()}</div>
           <div className="metric-label">Мат. ожидание уходов за 3 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
+        </div>
+        <div className="metric-card">
+          <div className="metric-number">{(() => {
+            if (!attritionReport) return '—';
+            return attritionReport.expectedAttritions
+              .filter(entry => entry.monthIndex <= 6)
+              .reduce((sum, entry) => {
+                if (!currentCityFilter || entry.city === currentCityFilter) {
+                  return sum + entry.expectedDepartures;
+                }
+                return sum;
+              }, 0)
+              .toFixed(1);
+          })()}</div>
+          <div className="metric-label">Мат. ожидание уходов за 6 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
+        </div>
+        <div className="metric-card">
+          <div className="metric-number">{(() => {
+            if (!attritionReport) return '—';
+            return attritionReport.expectedAttritions
+              .filter(entry => entry.monthIndex <= 9)
+              .reduce((sum, entry) => {
+                if (!currentCityFilter || entry.city === currentCityFilter) {
+                  return sum + entry.expectedDepartures;
+                }
+                return sum;
+              }, 0)
+              .toFixed(1);
+          })()}</div>
+          <div className="metric-label">Мат. ожидание уходов за 9 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
+        </div>
+        <div className="metric-card">
+          <div className="metric-number">{(() => {
+            if (!attritionReport) return '—';
+            return attritionReport.expectedAttritions
+              .filter(entry => entry.monthIndex <= 12)
+              .reduce((sum, entry) => {
+                if (!currentCityFilter || entry.city === currentCityFilter) {
+                  return sum + entry.expectedDepartures;
+                }
+                return sum;
+              }, 0)
+              .toFixed(1);
+          })()}</div>
+          <div className="metric-label">Мат. ожидание уходов за 12 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
         </div>
       </div>
 
@@ -884,10 +970,19 @@ function App() {
                     <th className="sortable" onClick={() => handleSort('endDate')}>
                       Дата увольнения {sortField === 'endDate' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </th>
-                    <th className="sortable">
-                      Риск ухода (3 мес)
-                    </th>
-                    <th>PIP</th>
+                     <th className="sortable">
+                       Риск ухода (3 мес)
+                     </th>
+                     <th className="sortable">
+                       Риск ухода (6 мес)
+                     </th>
+                     <th className="sortable">
+                       Риск ухода (9 мес)
+                     </th>
+                     <th className="sortable">
+                       Риск ухода (12 мес)
+                     </th>
+                     <th>PIP</th>
                     <th>Действия</th>
                   </tr>
                 </thead>
@@ -913,12 +1008,45 @@ function App() {
 
                       const attrition = attritionByLeader.get(leader.id);
                       const probability3 = attrition ? getProbabilityForWindow(attrition, 3) : null;
+                      const probability6 = attrition ? getProbabilityForWindow(attrition, 6) : null;
+                      const probability9 = attrition ? getProbabilityForWindow(attrition, 9) : null;
+                      const probability12 = attrition ? getProbabilityForWindow(attrition, 12) : null;
                       
                       // Определяем, какое значение показывать: ручное или автоматическое
-                      const displayValue = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
+                      const displayValue3 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
                         ? leader.manualAttritionRisk 
                         : probability3;
+                      const displayValue6 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
+                        ? leader.manualAttritionRisk 
+                        : probability6;
+                      const displayValue9 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
+                        ? leader.manualAttritionRisk 
+                        : probability9;
+                      const displayValue12 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
+                        ? leader.manualAttritionRisk 
+                        : probability12;
                       const isManual = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined;
+
+                      const renderAttritionCell = (value: number | null) => (
+                        <td className={`attrition-cell ${value !== null ? 'probability-' + probabilityLevel(value) : ''}`}>
+                          <div className="attrition-cell-values">
+                            <span 
+                              className={isManual ? 'manual-value' : 'auto-value'}
+                              title={isManual ? 'Ручное значение (нажмите для редактирования)' : 'Автоматически рассчитанное значение (нажмите для редактирования)'}
+                              onClick={() => {
+                                editLeader(leader);
+                              }}
+                              style={{ 
+                                cursor: 'pointer',
+                                color: isManual ? 'black' : 'gray',
+                                fontWeight: isManual ? 'bold' : 'normal'
+                              }}
+                            >
+                              {formatProbability(value)}
+                            </span>
+                          </div>
+                        </td>
+                      );
 
                       return (
                         <tr key={leader.id}>
@@ -930,25 +1058,10 @@ function App() {
                             {monthsWorked} мес.
                           </td>
                           <td>{leader.endDate ? new Date(leader.endDate).toLocaleDateString() : 'Работает'}</td>
-                          <td className={`attrition-cell ${displayValue !== null ? 'probability-' + probabilityLevel(displayValue) : ''}`}>
-                            <div className="attrition-cell-values">
-                              <span 
-                                className={isManual ? 'manual-value' : 'auto-value'}
-                                title={isManual ? 'Ручное значение (нажмите для редактирования)' : 'Автоматически рассчитанное значение (нажмите для редактирования)'}
-                                onClick={() => {
-                                  // Открыть модальное окно редактирования с текущим значением
-                                  editLeader(leader);
-                                }}
-                                style={{ 
-                                  cursor: 'pointer',
-                                  color: isManual ? 'black' : 'gray',
-                                  fontWeight: isManual ? 'bold' : 'normal'
-                                }}
-                              >
-                                {formatProbability(displayValue)}
-                              </span>
-                            </div>
-                          </td>
+                          {renderAttritionCell(displayValue3)}
+                          {renderAttritionCell(displayValue6)}
+                          {renderAttritionCell(displayValue9)}
+                          {renderAttritionCell(displayValue12)}
                           <td>
                             {leader.pipName && (
                               <div className={`pip-info ${

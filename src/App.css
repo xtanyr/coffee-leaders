@@ -1138,6 +1138,28 @@ body {
   text-decoration: underline;
 }
 
+.data-table th:nth-child(7),
+.data-table td:nth-child(7),
+.data-table th:nth-child(8),
+.data-table td:nth-child(8),
+.data-table th:nth-child(9),
+.data-table td:nth-child(9),
+.data-table th:nth-child(10),
+.data-table td:nth-child(10) {
+  width: 60px;
+  min-width: 60px;
+  max-width: 90px;
+  text-align: center;
+  padding: 14px 6px;
+}
+
+.data-table th:nth-child(7),
+.data-table th:nth-child(8),
+.data-table th:nth-child(9),
+.data-table th:nth-child(10) {
+  font-size: 0.75rem;
+}
+
 /* Form section for risk */
 .form-section-title {
   margin: 30px 0 15px 0;

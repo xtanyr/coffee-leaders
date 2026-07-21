@@ -303,7 +303,11 @@ export async function computeAttritionReport(
   const leaderInsights: LeaderAttritionInsight[] = activeLeaders.map((leader) => {
     const reference = now;
     const { breakdown, raw } = buildFeatureVector(leader, stats, reference);
-    const baseProbability = calculateBaseProbability(raw, stats, leader, reference);
+    const computedBaseProbability = calculateBaseProbability(raw, stats, leader, reference);
+    const baseProbability =
+      leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined
+        ? clampProbability(leader.manualAttritionRisk)
+        : computedBaseProbability;
     const distributedProbabilities = distributeProbability(baseProbability, monthBuckets.length);
     const probabilities: LeaderAttritionInsight['probabilities'] = monthBuckets.map((bucket: MonthBucket, index: number) => {
       const probability = distributedProbabilities[index] ?? 0;
