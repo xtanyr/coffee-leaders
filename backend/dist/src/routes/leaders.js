@@ -65,7 +65,7 @@ exports.router.get('/stats', async (req, res) => {
 // POST /api/leaders - Create new leader
 exports.router.post('/', async (req, res) => {
     try {
-        const { name, startDate, endDate, birthDate, city, coffeeShop, pipName, pipEndDate, pipSuccessChance, manualAttritionRisk } = req.body;
+        const { name, startDate, endDate, birthDate, city, coffeeShop, pipName, pipEndDate, pipSuccessChance, manualAttritionRisk, manualAttritionRisk3m, manualAttritionRisk6m, manualAttritionRisk9m, manualAttritionRisk12m } = req.body;
         const leader = await prisma.leader.create({
             data: {
                 name,
@@ -78,6 +78,10 @@ exports.router.post('/', async (req, res) => {
                 pipEndDate: pipEndDate ? new Date(pipEndDate) : null,
                 pipSuccessChance: pipSuccessChance ? parseInt(pipSuccessChance) : null,
                 ...(manualAttritionRisk !== undefined && { manualAttritionRisk: manualAttritionRisk !== null ? parseFloat(manualAttritionRisk) : null }),
+                ...(manualAttritionRisk3m !== undefined && { manualAttritionRisk3m: manualAttritionRisk3m !== null ? parseFloat(manualAttritionRisk3m) : null }),
+                ...(manualAttritionRisk6m !== undefined && { manualAttritionRisk6m: manualAttritionRisk6m !== null ? parseFloat(manualAttritionRisk6m) : null }),
+                ...(manualAttritionRisk9m !== undefined && { manualAttritionRisk9m: manualAttritionRisk9m !== null ? parseFloat(manualAttritionRisk9m) : null }),
+                ...(manualAttritionRisk12m !== undefined && { manualAttritionRisk12m: manualAttritionRisk12m !== null ? parseFloat(manualAttritionRisk12m) : null }),
             },
         });
         res.status(201).json(leader);
@@ -91,7 +95,7 @@ exports.router.post('/', async (req, res) => {
 exports.router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, startDate, endDate, birthDate, city, coffeeShop, pipName, pipEndDate, pipSuccessChance, manualAttritionRisk } = req.body;
+        const { name, startDate, endDate, birthDate, city, coffeeShop, pipName, pipEndDate, pipSuccessChance, manualAttritionRisk, manualAttritionRisk3m, manualAttritionRisk6m, manualAttritionRisk9m, manualAttritionRisk12m } = req.body;
         const leader = await prisma.leader.update({
             where: { id: parseInt(id) },
             data: {
@@ -105,6 +109,10 @@ exports.router.put('/:id', async (req, res) => {
                 pipEndDate: pipEndDate !== undefined ? (pipEndDate ? new Date(pipEndDate) : null) : undefined,
                 pipSuccessChance: pipSuccessChance !== undefined ? (pipSuccessChance ? parseInt(pipSuccessChance) : null) : undefined,
                 ...(manualAttritionRisk !== undefined && { manualAttritionRisk: manualAttritionRisk !== null ? parseFloat(manualAttritionRisk) : null }),
+                ...(manualAttritionRisk3m !== undefined && { manualAttritionRisk3m: manualAttritionRisk3m !== null ? parseFloat(manualAttritionRisk3m) : null }),
+                ...(manualAttritionRisk6m !== undefined && { manualAttritionRisk6m: manualAttritionRisk6m !== null ? parseFloat(manualAttritionRisk6m) : null }),
+                ...(manualAttritionRisk9m !== undefined && { manualAttritionRisk9m: manualAttritionRisk9m !== null ? parseFloat(manualAttritionRisk9m) : null }),
+                ...(manualAttritionRisk12m !== undefined && { manualAttritionRisk12m: manualAttritionRisk12m !== null ? parseFloat(manualAttritionRisk12m) : null }),
             },
         });
         res.json(leader);

@@ -157,7 +157,11 @@ function App() {
     pipName: '',
     pipEndDate: '',
     pipSuccessChance: '',
-    manualAttritionRisk: ''
+    manualAttritionRisk: '',
+    manualAttritionRisk3m: '',
+    manualAttritionRisk6m: '',
+    manualAttritionRisk9m: '',
+    manualAttritionRisk12m: ''
   });
   const hasPipValues = Boolean(
     leaderForm.pipName || leaderForm.pipEndDate || leaderForm.pipSuccessChance
@@ -419,7 +423,11 @@ function App() {
   const clearAttritionRisk = () => {
     setLeaderForm((prev) => ({
       ...prev,
-      manualAttritionRisk: ''
+      manualAttritionRisk: '',
+      manualAttritionRisk3m: '',
+      manualAttritionRisk6m: '',
+      manualAttritionRisk9m: '',
+      manualAttritionRisk12m: ''
     }));
   };
 
@@ -440,16 +448,19 @@ function App() {
           return Math.max(0, Math.min(100, parsed));
         })();
 
-    const manualRiskInput = leaderForm.manualAttritionRisk.trim();
-    const manualRiskValue = manualRiskInput === ''
-      ? null
-      : (() => {
-          const parsed = parseFloat(manualRiskInput);
-          if (Number.isNaN(parsed)) {
-            return null;
-          }
-          return Math.max(0, Math.min(1, parsed));
-        })();
+    const parseRisk = (value: string) => {
+      const trimmed = value.trim();
+      if (trimmed === '') return null;
+      const parsed = parseFloat(trimmed);
+      if (Number.isNaN(parsed)) return null;
+      return Math.max(0, Math.min(1, parsed));
+    };
+
+    const manualRiskValue = parseRisk(leaderForm.manualAttritionRisk);
+    const manualRisk3m = parseRisk(leaderForm.manualAttritionRisk3m);
+    const manualRisk6m = parseRisk(leaderForm.manualAttritionRisk6m);
+    const manualRisk9m = parseRisk(leaderForm.manualAttritionRisk9m);
+    const manualRisk12m = parseRisk(leaderForm.manualAttritionRisk12m);
 
     const leaderData = {
       name: leaderForm.name,
@@ -461,7 +472,11 @@ function App() {
       pipName: pipNameValue,
       pipEndDate: pipEndDateValue,
       pipSuccessChance: pipSuccessValue,
-      manualAttritionRisk: manualRiskValue
+      manualAttritionRisk: manualRiskValue,
+      manualAttritionRisk3m: manualRisk3m,
+      manualAttritionRisk6m: manualRisk6m,
+      manualAttritionRisk9m: manualRisk9m,
+      manualAttritionRisk12m: manualRisk12m
     };
 
     try {
@@ -481,7 +496,11 @@ function App() {
         pipName: '',
         pipEndDate: '',
         pipSuccessChance: '',
-        manualAttritionRisk: ''
+        manualAttritionRisk: '',
+        manualAttritionRisk3m: '',
+        manualAttritionRisk6m: '',
+        manualAttritionRisk9m: '',
+        manualAttritionRisk12m: ''
       });
       setEditingLeader(null);
       setShowFormModal(false);
@@ -533,6 +552,22 @@ function App() {
       manualAttritionRisk:
         leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined
           ? leader.manualAttritionRisk.toString()
+          : '',
+      manualAttritionRisk3m:
+        leader.manualAttritionRisk3m !== null && leader.manualAttritionRisk3m !== undefined
+          ? leader.manualAttritionRisk3m.toString()
+          : '',
+      manualAttritionRisk6m:
+        leader.manualAttritionRisk6m !== null && leader.manualAttritionRisk6m !== undefined
+          ? leader.manualAttritionRisk6m.toString()
+          : '',
+      manualAttritionRisk9m:
+        leader.manualAttritionRisk9m !== null && leader.manualAttritionRisk9m !== undefined
+          ? leader.manualAttritionRisk9m.toString()
+          : '',
+      manualAttritionRisk12m:
+        leader.manualAttritionRisk12m !== null && leader.manualAttritionRisk12m !== undefined
+          ? leader.manualAttritionRisk12m.toString()
           : ''
     });
     setEditingLeader(leader);
@@ -862,7 +897,11 @@ function App() {
                 pipName: '',
                 pipEndDate: '',
                 pipSuccessChance: '',
-                manualAttritionRisk: ''
+                manualAttritionRisk: '',
+                manualAttritionRisk3m: '',
+                manualAttritionRisk6m: '',
+                manualAttritionRisk9m: '',
+                manualAttritionRisk12m: ''
               });
               setShowFormModal(true);
             }}
@@ -960,21 +999,24 @@ function App() {
                       const probability12 = attrition ? getProbabilityForWindow(attrition, 12) : null;
                       
                       // Определяем, какое значение показывать: ручное или автоматическое
-                      const displayValue3 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
-                        ? leader.manualAttritionRisk 
+                      const displayValue3 = leader.manualAttritionRisk3m !== null && leader.manualAttritionRisk3m !== undefined 
+                        ? leader.manualAttritionRisk3m 
                         : probability3;
-                      const displayValue6 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
-                        ? leader.manualAttritionRisk 
+                      const displayValue6 = leader.manualAttritionRisk6m !== null && leader.manualAttritionRisk6m !== undefined 
+                        ? leader.manualAttritionRisk6m 
                         : probability6;
-                      const displayValue9 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
-                        ? leader.manualAttritionRisk 
+                      const displayValue9 = leader.manualAttritionRisk9m !== null && leader.manualAttritionRisk9m !== undefined 
+                        ? leader.manualAttritionRisk9m 
                         : probability9;
-                      const displayValue12 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
-                        ? leader.manualAttritionRisk 
+                      const displayValue12 = leader.manualAttritionRisk12m !== null && leader.manualAttritionRisk12m !== undefined 
+                        ? leader.manualAttritionRisk12m 
                         : probability12;
-                      const isManual = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined;
+                      const isManual3 = leader.manualAttritionRisk3m !== null && leader.manualAttritionRisk3m !== undefined;
+                      const isManual6 = leader.manualAttritionRisk6m !== null && leader.manualAttritionRisk6m !== undefined;
+                      const isManual9 = leader.manualAttritionRisk9m !== null && leader.manualAttritionRisk9m !== undefined;
+                      const isManual12 = leader.manualAttritionRisk12m !== null && leader.manualAttritionRisk12m !== undefined;
 
-                      const renderAttritionCell = (value: number | null) => (
+                      const renderAttritionCell = (value: number | null, isManual: boolean) => (
                         <td className={`attrition-cell ${value !== null ? 'probability-' + probabilityLevel(value) : ''}`}>
                           <div className="attrition-cell-values">
                             <span 
@@ -1005,10 +1047,10 @@ function App() {
                             {monthsWorked} мес.
                           </td>
                           <td>{leader.endDate ? new Date(leader.endDate).toLocaleDateString() : 'Работает'}</td>
-                          {renderAttritionCell(displayValue3)}
-                          {renderAttritionCell(displayValue6)}
-                          {renderAttritionCell(displayValue9)}
-                          {renderAttritionCell(displayValue12)}
+                          {renderAttritionCell(displayValue3, isManual3)}
+                          {renderAttritionCell(displayValue6, isManual6)}
+                          {renderAttritionCell(displayValue9, isManual9)}
+                          {renderAttritionCell(displayValue12, isManual12)}
                           <td>
                             {leader.pipName && (
                               <div className={`pip-info ${
@@ -1423,36 +1465,74 @@ function App() {
                     </button>
                   </div>
                   
-                  <h3 className="form-section-title">Риск ухода (экспертная оценка)</h3>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Риск ухода (0-1)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      className="form-input"
-                      value={leaderForm.manualAttritionRisk}
-                      onChange={(e) => setLeaderForm({...leaderForm, manualAttritionRisk: e.target.value})}
-                      placeholder="Оставьте пустым для автоматического расчета"
-                    />
-                    <small className="form-hint">
-                      Введите значение от 0 до 1 (например, 0.25 для 25%). 
-                      Оставьте поле пустым, чтобы использовать автоматически рассчитанный риск.
-                    </small>
-                  </div>
+                   <h3 className="form-section-title">Риск ухода (экспертная оценка)</h3>
+                   
+                   <div className="form-group">
+                     <label className="form-label">Риск ухода (3 мес)</label>
+                     <input
+                       type="number"
+                       min="0"
+                       max="1"
+                       step="0.01"
+                       className="form-input"
+                       value={leaderForm.manualAttritionRisk3m}
+                       onChange={(e) => setLeaderForm({...leaderForm, manualAttritionRisk3m: e.target.value})}
+                       placeholder="Оставьте пустым для автоматического расчета"
+                     />
+                   </div>
 
-                  <div className="risk-actions">
-                    <button
-                      type="button"
-                      className="risk-clear-btn"
-                      onClick={clearAttritionRisk}
-                      disabled={!leaderForm.manualAttritionRisk}
-                    >
-                      Вернуть автоматический расчет
-                    </button>
-                  </div>
+                   <div className="form-group">
+                     <label className="form-label">Риск ухода (6 мес)</label>
+                     <input
+                       type="number"
+                       min="0"
+                       max="1"
+                       step="0.01"
+                       className="form-input"
+                       value={leaderForm.manualAttritionRisk6m}
+                       onChange={(e) => setLeaderForm({...leaderForm, manualAttritionRisk6m: e.target.value})}
+                       placeholder="Оставьте пустым для автоматического расчета"
+                     />
+                   </div>
+
+                   <div className="form-group">
+                     <label className="form-label">Риск ухода (9 мес)</label>
+                     <input
+                       type="number"
+                       min="0"
+                       max="1"
+                       step="0.01"
+                       className="form-input"
+                       value={leaderForm.manualAttritionRisk9m}
+                       onChange={(e) => setLeaderForm({...leaderForm, manualAttritionRisk9m: e.target.value})}
+                       placeholder="Оставьте пустым для автоматического расчета"
+                     />
+                   </div>
+
+                   <div className="form-group">
+                     <label className="form-label">Риск ухода (12 мес)</label>
+                     <input
+                       type="number"
+                       min="0"
+                       max="1"
+                       step="0.01"
+                       className="form-input"
+                       value={leaderForm.manualAttritionRisk12m}
+                       onChange={(e) => setLeaderForm({...leaderForm, manualAttritionRisk12m: e.target.value})}
+                       placeholder="Оставьте пустым для автоматического расчета"
+                     />
+                   </div>
+
+                   <div className="risk-actions">
+                     <button
+                       type="button"
+                       className="risk-clear-btn"
+                       onClick={clearAttritionRisk}
+                       disabled={!leaderForm.manualAttritionRisk3m && !leaderForm.manualAttritionRisk6m && !leaderForm.manualAttritionRisk9m && !leaderForm.manualAttritionRisk12m}
+                     >
+                       Вернуть автоматический расчет
+                     </button>
+                   </div>
                   
                   <button type="submit" className="submit-btn">
                     {editingLeader ? 'Обновить Лидера' : 'Добавить Лидера'}

@@ -23,6 +23,10 @@ model Leader {
   pipEndDate      DateTime? @map("pip_end_date")
   pipSuccessChance Int?     @map("pip_success_chance")
   manualAttritionRisk Float?  @map("manual_attrition_risk")
+  manualAttritionRisk3m Float? @map("manual_attrition_risk_3m")
+  manualAttritionRisk6m Float? @map("manual_attrition_risk_6m")
+  manualAttritionRisk9m Float? @map("manual_attrition_risk_9m")
+  manualAttritionRisk12m Float? @map("manual_attrition_risk_12m")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

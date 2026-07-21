@@ -10,6 +10,10 @@ export interface Leader {
   pipEndDate?: string | null;
   pipSuccessChance?: number | null;
   manualAttritionRisk?: number | null; // Ручное значение риска ухода (0-1)
+  manualAttritionRisk3m?: number | null;
+  manualAttritionRisk6m?: number | null;
+  manualAttritionRisk9m?: number | null;
+  manualAttritionRisk12m?: number | null;
   createdAt: string;
   updatedAt: string;
 }
