@@ -614,59 +614,6 @@ function App() {
         ))}
       </div>
 
-      <section className="analytics-section">
-        <h2 className="section-title">Прогноз ухода лидеров</h2>
-        {analyticsError && (
-          <div className="analytics-error">{analyticsError}</div>
-        )}
-        {isLoadingAnalytics && (
-          <div className="analytics-loading">Загружаем прогнозы…</div>
-        )}
-        {!isLoadingAnalytics && !analyticsError && calendarForecast && (
-          <div className="calendar-section">
-            <div className="calendar-grid">
-              {calendarCards.map(card => (
-                <div className="calendar-card" key={card.monthKey}>
-                  <div className="calendar-card-header">
-                    <div className="calendar-card-month">{card.label}</div>
-                    <div className="calendar-card-range">{card.startDate} — {card.endDate}</div>
-                  </div>
-                  <div className="calendar-metrics">
-                    <div>
-                      <span className="calendar-label">Ожидание уходов</span>
-                      {card.expectedAttritions.toFixed(1)}
-                    </div>
-                    <div>
-                      <span className="calendar-label">Плановые открытия</span>
-                      {card.plannedOpenings}
-                    </div>
-                    <div>
-                      <span className="calendar-label">Нужно лидеров</span>
-                      {card.netLeadersNeeded}
-                    </div>
-                  </div>
-                  <div className="calendar-cities">
-                    {card.cities.map(city => (
-                      <div className="calendar-city-row" key={city.city}>
-                        <div className="calendar-city-name">{city.city}</div>
-                        <div className="calendar-city-values">
-                          <span>Уходы: {city.expectedAttritions.toFixed(1)}</span>
-                          <span>Открытия: {city.plannedOpenings}</span>
-                          <span>Нужно: {city.netLeadersNeeded}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {!isLoadingAnalytics && !analyticsError && !calendarForecast && (
-          <div className="analytics-empty">Прогнозы пока не рассчитаны</div>
-        )}
-      </section>
-
       <div className="metrics-grid">
         <div className="metric-card">
           <div className="metric-number">{(() => {
