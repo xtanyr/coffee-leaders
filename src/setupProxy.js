@@ -10,6 +10,8 @@ module.exports = function (app) {
     createProxyMiddleware({
       target,
       changeOrigin: true,
+      proxyTimeout: 120000,
+      timeout: 120000,
     })
   );
 };

@@ -214,7 +214,7 @@ function App() {
       setLeaders(leadersRes.data);
       setCoffeeShops(coffeeShopsRes.data);
       setAuditEntries(auditEntriesRes.data);
-      fetchAnalytics();
+      setTimeout(() => fetchAnalytics(), 500);
     } catch (error) {
       console.error('Error loading data:', error);
       setLoadError(
