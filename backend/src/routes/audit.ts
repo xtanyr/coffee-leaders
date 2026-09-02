@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../prisma';
 
 export const router = Router();
-const prisma = new PrismaClient();
 
 // Helper function to handle BigInt serialization
 const replacer = (key: string, value: any) => 

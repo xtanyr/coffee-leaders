@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../prisma';
 
 export const router = Router();
-const prisma = new PrismaClient();
 
 // GET /api/coffee-shops - Get all coffee shops
 router.get('/', async (req, res) => {

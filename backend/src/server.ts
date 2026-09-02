@@ -1,16 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
 import leadersRouter from './routes/leaders';
 import coffeeShopsRouter from './routes/coffeeShops';
 import auditRouter from './routes/audit';
 import analyticsRouter from './routes/analytics';
+import prisma from './prisma';
 
 dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3011;
 
 const parseOrigins = (value?: string): string[] =>

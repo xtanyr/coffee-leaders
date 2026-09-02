@@ -45,8 +45,8 @@ module.exports = {
     {
       name: 'backend',
       cwd: './backend',
-      script: 'npm',
-      args: 'run dev',
+      script: 'node',
+      args: '--max-old-space-size=512 node_modules/.bin/tsx src/server.ts',
       watch: ['src', 'prisma'],
       ignore_watch: ['node_modules', 'dist'],
       env: backendEnv,

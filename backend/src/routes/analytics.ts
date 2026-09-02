@@ -1,13 +1,12 @@
 import { Router } from 'express';
 import { ParsedQs } from 'qs';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../prisma';
 import {
   computeAttritionReport,
   computeCalendarForecast,
 } from '../services/analytics/leaderAttrition';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 const DEFAULT_HORIZON = 12;
 const MIN_HORIZON = 1;
