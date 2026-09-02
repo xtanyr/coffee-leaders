@@ -485,7 +485,7 @@ function App() {
       });
       setEditingLeader(null);
       setShowFormModal(false);
-      loadData();
+      await loadData();
     } catch (error) {
       console.error('Error saving leader:', error);
     }
