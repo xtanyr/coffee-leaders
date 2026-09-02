@@ -34,9 +34,12 @@ const parseHorizon = (value?: string | string[]): number => {
   return Math.min(MAX_HORIZON, Math.max(MIN_HORIZON, Math.floor(numeric)));
 };
 
+const yieldToEventLoop = () => new Promise<void>(resolve => setImmediate(resolve));
+
 router.get('/attrition', async (req, res) => {
   try {
     const horizon = parseHorizon(normalizeStringParam(req.query.horizon));
+    await yieldToEventLoop();
     const report = await computeAttritionReport(prisma, horizon);
     if (!report) {
       return res.status(204).send();
@@ -51,6 +54,7 @@ router.get('/attrition', async (req, res) => {
 router.get('/calendar', async (req, res) => {
   try {
     const horizon = parseHorizon(normalizeStringParam(req.query.horizon));
+    await yieldToEventLoop();
     const forecast = await computeCalendarForecast(prisma, horizon);
     if (!forecast) {
       return res.status(204).send();

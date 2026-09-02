@@ -300,7 +300,13 @@ export async function computeAttritionReport(
   const monthBuckets = buildMonthBuckets(now, horizonMonths);
 
   const expectedMap = new Map<string, number>();
-  const leaderInsights: LeaderAttritionInsight[] = activeLeaders.map((leader) => {
+  const leaderInsights: LeaderAttritionInsight[] = [];
+
+  for (let i = 0; i < activeLeaders.length; i++) {
+    if (i % 5 === 0) {
+      await new Promise<void>(resolve => setImmediate(resolve));
+    }
+    const leader = activeLeaders[i];
     const reference = now;
     const { breakdown, raw } = buildFeatureVector(leader, stats, reference);
     const computedBaseProbability = calculateBaseProbability(raw, stats, leader, reference);
@@ -323,7 +329,7 @@ export async function computeAttritionReport(
 
     const cumulativeProbability = baseProbability;
 
-    return {
+    leaderInsights.push({
       leaderId: leader.id,
       name: leader.name,
       city: leader.city,
@@ -336,8 +342,8 @@ export async function computeAttritionReport(
       rawMetrics: raw,
       probabilities,
       cumulativeProbability,
-    };
-  });
+    });
+  }
 
   const expectedAttritions = buildExpectedAttritions(
     leaders,
