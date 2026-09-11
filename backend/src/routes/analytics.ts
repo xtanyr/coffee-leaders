@@ -51,6 +51,36 @@ router.get('/attrition', async (req, res) => {
   }
 });
 
+router.get('/debug/novosibirsk', async (req, res) => {
+  try {
+    const leaders = await prisma.leader.findMany();
+    const activeLeaders = leaders.filter((leader) => !leader.endDate);
+    const horizonMonths = 12;
+    const now = new Date();
+    const stats = calculateFeatureStats(leaders, now);
+    const monthBuckets = buildMonthBuckets(now, horizonMonths);
+    const expectedMap = new Map<string, number>();
+    const results: any[] = [];
+    for (const leader of activeLeaders.filter(l => normalizeCity(l.city) === 'Новосибирск')) {
+      const { raw } = buildFeatureVector(leader, stats, now);
+      const computedBaseProbability = calculateBaseProbability(raw, stats, leader, now);
+      const baseProbability = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined ? clampProbability(leader.manualAttritionRisk) : computedBaseProbability;
+      const distributedProbabilities = distributeProbability(baseProbability, monthBuckets.length);
+      monthBuckets.forEach((bucket, index) => {
+        const key = `${normalizeCity(leader.city)}|${bucket.key}`;
+        expectedMap.set(key, (expectedMap.get(key) ?? 0) + (distributedProbabilities[index] ?? 0));
+      });
+      results.push({ id: leader.id, baseProbability, distributedProbabilities: distributedProbabilities.slice(0, 3) });
+    }
+    const expectedAttritions = buildExpectedAttritions(activeLeaders, monthBuckets, expectedMap);
+    const nsAttritions = expectedAttritions.filter(e => e.city === 'Новосибирск');
+    res.json({ activeNovosibirskLeaders: results, expectedMapEntries: Array.from(expectedMap.entries()).filter(([k]) => k.startsWith('Новосибирск')), nsAttritions: nsAttritions.slice(0, 3) });
+  } catch (error) {
+    console.error('Debug error:', error);
+    res.status(500).json({ error: 'Debug failed' });
+  }
+});
+
 router.get('/calendar', async (req, res) => {
   try {
     const horizon = parseHorizon(normalizeStringParam(req.query.horizon));
