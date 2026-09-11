@@ -69,12 +69,16 @@ function buildMonthBuckets(now: Date, horizonMonths: number): MonthBucket[] {
   return buckets;
 }
 
+function normalizeCity(value: string): string {
+  return value.trim();
+}
+
 function buildExpectedAttritions(
   leaders: Leader[],
   buckets: MonthBucket[],
   expectedMap: Map<string, number>
 ): ExpectedAttritionEntry[] {
-  const cities = Array.from(new Set(leaders.map((leader) => leader.city))).sort();
+  const cities = Array.from(new Set(leaders.map((leader) => normalizeCity(leader.city)))).sort();
   const entries: ExpectedAttritionEntry[] = [];
   cities.forEach((city) => {
     buckets.forEach((bucket) => {
@@ -317,7 +321,7 @@ export async function computeAttritionReport(
     const distributedProbabilities = distributeProbability(baseProbability, monthBuckets.length);
     const probabilities: LeaderAttritionInsight['probabilities'] = monthBuckets.map((bucket: MonthBucket, index: number) => {
       const probability = distributedProbabilities[index] ?? 0;
-      const key = `${leader.city}|${bucket.key}`;
+      const key = `${normalizeCity(leader.city)}|${bucket.key}`;
       expectedMap.set(key, (expectedMap.get(key) ?? 0) + probability);
       return {
         monthIndex: bucket.index,
@@ -346,7 +350,7 @@ export async function computeAttritionReport(
   }
 
   const expectedAttritions = buildExpectedAttritions(
-    leaders,
+    activeLeaders,
     monthBuckets,
     expectedMap
   );
