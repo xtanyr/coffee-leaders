@@ -10,6 +10,9 @@ export interface Leader {
   pipEndDate?: string | null;
   pipSuccessChance?: number | null;
   manualAttritionRisk?: number | null; // Ручное значение риска ухода (0-1)
+  manualAttritionRisk6?: number | null; // Ручное значение риска ухода на 6 месяцев (0-1)
+  manualAttritionRisk9?: number | null; // Ручное значение риска ухода на 9 месяцев (0-1)
+  manualAttritionRisk12?: number | null; // Ручное значение риска ухода на 12 месяцев (0-1)
   createdAt: string;
   updatedAt: string;
 }
@@ -98,6 +101,10 @@ export interface LeaderAttritionInsight {
   };
   probabilities: LeaderProbabilityByMonth[];
   cumulativeProbability: number;
+  manualAttritionRisk: number | null;
+  manualAttritionRisk6: number | null;
+  manualAttritionRisk9: number | null;
+  manualAttritionRisk12: number | null;
 }
 
 export interface ExpectedAttritionEntry {

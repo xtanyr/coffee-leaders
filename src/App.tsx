@@ -7,7 +7,6 @@ import {
   City,
   AuditEntry,
   AttritionReport,
-  CalendarForecast,
   LeaderAttritionInsight,
 } from './types';
 import { leadersApi, coffeeShopsApi, auditApi, analyticsApi } from './api';
@@ -102,7 +101,10 @@ function App() {
     pipName: '',
     pipEndDate: '',
     pipSuccessChance: '',
-    manualAttritionRisk: ''
+    manualAttritionRisk: '',
+    manualAttritionRisk6: '',
+    manualAttritionRisk9: '',
+    manualAttritionRisk12: ''
   });
   const hasPipValues = Boolean(
     leaderForm.pipName || leaderForm.pipEndDate || leaderForm.pipSuccessChance
@@ -355,9 +357,19 @@ function App() {
   const clearAttritionRisk = () => {
     setLeaderForm((prev) => ({
       ...prev,
-      manualAttritionRisk: ''
+      manualAttritionRisk: '',
+      manualAttritionRisk6: '',
+      manualAttritionRisk9: '',
+      manualAttritionRisk12: ''
     }));
   };
+
+  const hasManualAttritionRiskValues = Boolean(
+    leaderForm.manualAttritionRisk ||
+    leaderForm.manualAttritionRisk6 ||
+    leaderForm.manualAttritionRisk9 ||
+    leaderForm.manualAttritionRisk12
+  );
 
   const handleLeaderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -387,6 +399,14 @@ function App() {
           return Math.max(0, Math.min(1, parsed));
         })();
 
+    const parseManualRisk = (value: string) => {
+      const trimmed = value.trim();
+      if (trimmed === '') return null;
+      const parsed = parseFloat(trimmed);
+      if (Number.isNaN(parsed)) return null;
+      return Math.max(0, Math.min(1, parsed));
+    };
+
     const leaderData = {
       name: leaderForm.name,
       startDate: leaderForm.startDate,
@@ -397,7 +417,10 @@ function App() {
       pipName: pipNameValue,
       pipEndDate: pipEndDateValue,
       pipSuccessChance: pipSuccessValue,
-      manualAttritionRisk: manualRiskValue
+      manualAttritionRisk: manualRiskValue,
+      manualAttritionRisk6: parseManualRisk(leaderForm.manualAttritionRisk6),
+      manualAttritionRisk9: parseManualRisk(leaderForm.manualAttritionRisk9),
+      manualAttritionRisk12: parseManualRisk(leaderForm.manualAttritionRisk12)
     };
 
     try {
@@ -417,7 +440,10 @@ function App() {
         pipName: '',
         pipEndDate: '',
         pipSuccessChance: '',
-        manualAttritionRisk: ''
+        manualAttritionRisk: '',
+        manualAttritionRisk6: '',
+        manualAttritionRisk9: '',
+        manualAttritionRisk12: ''
       });
       setEditingLeader(null);
       setShowFormModal(false);
@@ -469,6 +495,18 @@ function App() {
       manualAttritionRisk:
         leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined
           ? leader.manualAttritionRisk.toString()
+          : '',
+      manualAttritionRisk6:
+        leader.manualAttritionRisk6 !== null && leader.manualAttritionRisk6 !== undefined
+          ? leader.manualAttritionRisk6.toString()
+          : '',
+      manualAttritionRisk9:
+        leader.manualAttritionRisk9 !== null && leader.manualAttritionRisk9 !== undefined
+          ? leader.manualAttritionRisk9.toString()
+          : '',
+      manualAttritionRisk12:
+        leader.manualAttritionRisk12 !== null && leader.manualAttritionRisk12 !== undefined
+          ? leader.manualAttritionRisk12.toString()
           : ''
     });
     setEditingLeader(leader);
@@ -612,16 +650,12 @@ function App() {
           <div className="metric-number">{(() => {
             if (!attritionReport) return '—';
             let sum = 0;
-            for (const leader of leaders) {
-              if (leader.endDate) continue;
+            for (const leader of attritionReport.leaders) {
               if (!currentCityFilter || leader.city === currentCityFilter) {
                 if (leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined) {
                   sum += leader.manualAttritionRisk;
                 } else {
-                  const attrition = attritionByLeader.get(leader.id);
-                  if (attrition) {
-                    sum += getProbabilityForWindow(attrition, 3);
-                  }
+                  sum += getProbabilityForWindow(leader, 3);
                 }
               }
             }
@@ -633,12 +667,12 @@ function App() {
           <div className="metric-number">{(() => {
             if (!attritionReport) return '—';
             let sum = 0;
-            for (const leader of leaders) {
-              if (leader.endDate) continue;
+            for (const leader of attritionReport.leaders) {
               if (!currentCityFilter || leader.city === currentCityFilter) {
-                const attrition = attritionByLeader.get(leader.id);
-                if (attrition) {
-                  sum += getProbabilityForWindow(attrition, 6);
+                if (leader.manualAttritionRisk6 !== null && leader.manualAttritionRisk6 !== undefined) {
+                  sum += leader.manualAttritionRisk6;
+                } else {
+                  sum += getProbabilityForWindow(leader, 6);
                 }
               }
             }
@@ -650,12 +684,12 @@ function App() {
           <div className="metric-number">{(() => {
             if (!attritionReport) return '—';
             let sum = 0;
-            for (const leader of leaders) {
-              if (leader.endDate) continue;
+            for (const leader of attritionReport.leaders) {
               if (!currentCityFilter || leader.city === currentCityFilter) {
-                const attrition = attritionByLeader.get(leader.id);
-                if (attrition) {
-                  sum += getProbabilityForWindow(attrition, 9);
+                if (leader.manualAttritionRisk9 !== null && leader.manualAttritionRisk9 !== undefined) {
+                  sum += leader.manualAttritionRisk9;
+                } else {
+                  sum += getProbabilityForWindow(leader, 9);
                 }
               }
             }
@@ -667,12 +701,12 @@ function App() {
           <div className="metric-number">{(() => {
             if (!attritionReport) return '—';
             let sum = 0;
-            for (const leader of leaders) {
-              if (leader.endDate) continue;
+            for (const leader of attritionReport.leaders) {
               if (!currentCityFilter || leader.city === currentCityFilter) {
-                const attrition = attritionByLeader.get(leader.id);
-                if (attrition) {
-                  sum += getProbabilityForWindow(attrition, 12);
+                if (leader.manualAttritionRisk12 !== null && leader.manualAttritionRisk12 !== undefined) {
+                  sum += leader.manualAttritionRisk12;
+                } else {
+                  sum += getProbabilityForWindow(leader, 12);
                 }
               }
             }
@@ -810,7 +844,10 @@ function App() {
                 pipName: '',
                 pipEndDate: '',
                 pipSuccessChance: '',
-                manualAttritionRisk: ''
+                manualAttritionRisk: '',
+                manualAttritionRisk6: '',
+                manualAttritionRisk9: '',
+                manualAttritionRisk12: ''
               });
               setShowFormModal(true);
             }}
@@ -901,20 +938,29 @@ function App() {
                       const referenceDate = leader.endDate ? new Date(leader.endDate) : new Date();
                       const monthsWorked = Math.floor((referenceDate.getTime() - startDate.getTime()) / (30.44 * 24 * 60 * 60 * 1000));
 
-                      const attrition = attritionByLeader.get(leader.id);
-                      const probability3 = attrition ? getProbabilityForWindow(attrition, 3) : null;
-                      const probability6 = attrition ? getProbabilityForWindow(attrition, 6) : null;
-                      const probability9 = attrition ? getProbabilityForWindow(attrition, 9) : null;
-                      const probability12 = attrition ? getProbabilityForWindow(attrition, 12) : null;
-                      
-                      // Определяем, какое значение показывать: ручное или автоматическое
-                      const displayValue3 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
-                        ? leader.manualAttritionRisk 
-                        : probability3;
-                      const displayValue6 = probability6;
-                      const displayValue9 = probability9;
-                      const displayValue12 = probability12;
-                      const isManual3 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined;
+                       const attrition = attritionByLeader.get(leader.id);
+                       const probability3 = attrition ? getProbabilityForWindow(attrition, 3) : null;
+                       const probability6 = attrition ? getProbabilityForWindow(attrition, 6) : null;
+                       const probability9 = attrition ? getProbabilityForWindow(attrition, 9) : null;
+                       const probability12 = attrition ? getProbabilityForWindow(attrition, 12) : null;
+                       
+                       // Определяем, какое значение показывать: ручное или автоматическое
+                       const displayValue3 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
+                         ? leader.manualAttritionRisk 
+                         : probability3;
+                       const displayValue6 = leader.manualAttritionRisk6 !== null && leader.manualAttritionRisk6 !== undefined 
+                         ? leader.manualAttritionRisk6 
+                         : probability6;
+                       const displayValue9 = leader.manualAttritionRisk9 !== null && leader.manualAttritionRisk9 !== undefined 
+                         ? leader.manualAttritionRisk9 
+                         : probability9;
+                       const displayValue12 = leader.manualAttritionRisk12 !== null && leader.manualAttritionRisk12 !== undefined 
+                         ? leader.manualAttritionRisk12 
+                         : probability12;
+                       const isManual3 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined;
+                       const isManual6 = leader.manualAttritionRisk6 !== null && leader.manualAttritionRisk6 !== undefined;
+                       const isManual9 = leader.manualAttritionRisk9 !== null && leader.manualAttritionRisk9 !== undefined;
+                       const isManual12 = leader.manualAttritionRisk12 !== null && leader.manualAttritionRisk12 !== undefined;
 
                       const renderAttritionCell = (value: number | null, isManual: boolean) => (
                         <td className={`attrition-cell ${value !== null ? 'probability-' + probabilityLevel(value) : ''}`}>
@@ -947,10 +993,10 @@ function App() {
                             {monthsWorked} мес.
                           </td>
                           <td>{leader.endDate ? new Date(leader.endDate).toLocaleDateString() : 'Работает'}</td>
-                          {renderAttritionCell(displayValue3, isManual3)}
-                          {renderAttritionCell(displayValue6, false)}
-                          {renderAttritionCell(displayValue9, false)}
-                          {renderAttritionCell(displayValue12, false)}
+                           {renderAttritionCell(displayValue3, isManual3)}
+                           {renderAttritionCell(displayValue6, isManual6)}
+                           {renderAttritionCell(displayValue9, isManual9)}
+                           {renderAttritionCell(displayValue12, isManual12)}
                           <td>
                             {leader.pipName && (
                               <div className={`pip-info ${
@@ -1365,36 +1411,74 @@ function App() {
                     </button>
                   </div>
                   
-                  <h3 className="form-section-title">Риск ухода (экспертная оценка)</h3>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Риск ухода (0-1)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      className="form-input"
-                      value={leaderForm.manualAttritionRisk}
-                      onChange={(e) => setLeaderForm({...leaderForm, manualAttritionRisk: e.target.value})}
-                      placeholder="Оставьте пустым для автоматического расчета"
-                    />
-                    <small className="form-hint">
-                      Введите значение от 0 до 1 (например, 0.25 для 25%). 
-                      Оставьте поле пустым, чтобы использовать автоматически рассчитанный риск.
-                    </small>
-                  </div>
+                   <h3 className="form-section-title">Риск ухода (экспертная оценка)</h3>
+                   
+                   <div className="form-group">
+                     <label className="form-label">Риск ухода на 3 мес (0-1)</label>
+                     <input
+                       type="number"
+                       min="0"
+                       max="1"
+                       step="0.01"
+                       className="form-input"
+                       value={leaderForm.manualAttritionRisk}
+                       onChange={(e) => setLeaderForm({...leaderForm, manualAttritionRisk: e.target.value})}
+                       placeholder="Оставьте пустым для автоматического расчета"
+                     />
+                   </div>
 
-                  <div className="risk-actions">
-                    <button
-                      type="button"
-                      className="risk-clear-btn"
-                      onClick={clearAttritionRisk}
-                      disabled={!leaderForm.manualAttritionRisk}
-                    >
-                      Вернуть автоматический расчет
-                    </button>
-                  </div>
+                   <div className="form-group">
+                     <label className="form-label">Риск ухода на 6 мес (0-1)</label>
+                     <input
+                       type="number"
+                       min="0"
+                       max="1"
+                       step="0.01"
+                       className="form-input"
+                       value={leaderForm.manualAttritionRisk6}
+                       onChange={(e) => setLeaderForm({...leaderForm, manualAttritionRisk6: e.target.value})}
+                       placeholder="Оставьте пустым для автоматического расчета"
+                     />
+                   </div>
+
+                   <div className="form-group">
+                     <label className="form-label">Риск ухода на 9 мес (0-1)</label>
+                     <input
+                       type="number"
+                       min="0"
+                       max="1"
+                       step="0.01"
+                       className="form-input"
+                       value={leaderForm.manualAttritionRisk9}
+                       onChange={(e) => setLeaderForm({...leaderForm, manualAttritionRisk9: e.target.value})}
+                       placeholder="Оставьте пустым для автоматического расчета"
+                     />
+                   </div>
+
+                   <div className="form-group">
+                     <label className="form-label">Риск ухода на 12 мес (0-1)</label>
+                     <input
+                       type="number"
+                       min="0"
+                       max="1"
+                       step="0.01"
+                       className="form-input"
+                       value={leaderForm.manualAttritionRisk12}
+                       onChange={(e) => setLeaderForm({...leaderForm, manualAttritionRisk12: e.target.value})}
+                       placeholder="Оставьте пустым для автоматического расчета"
+                     />
+                   </div>
+
+                   <div className="risk-actions">
+                     <button
+                       type="button"
+                       className="risk-clear-btn"
+                       onClick={clearAttritionRisk}
+                       disabled={!hasManualAttritionRiskValues}
+                     >
+                       Вернуть автоматический расчет
+                     </button>
+                   </div>
                   
                   <button type="submit" className="submit-btn">
                     {editingLeader ? 'Обновить Лидера' : 'Добавить Лидера'}

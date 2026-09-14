@@ -237,6 +237,10 @@ export interface LeaderAttritionInsight {
     probability: number;
   }>;
   cumulativeProbability: number;
+  manualAttritionRisk: number | null;
+  manualAttritionRisk6: number | null;
+  manualAttritionRisk9: number | null;
+  manualAttritionRisk12: number | null;
 }
 
 export interface ExpectedAttritionEntry {
@@ -342,6 +346,10 @@ export async function computeAttritionReport(
       rawMetrics: raw,
       probabilities,
       cumulativeProbability,
+      manualAttritionRisk: leader.manualAttritionRisk ?? null,
+      manualAttritionRisk6: leader.manualAttritionRisk6 ?? null,
+      manualAttritionRisk9: leader.manualAttritionRisk9 ?? null,
+      manualAttritionRisk12: leader.manualAttritionRisk12 ?? null,
     });
   }
 
