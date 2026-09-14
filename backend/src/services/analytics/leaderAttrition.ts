@@ -314,11 +314,17 @@ export async function computeAttritionReport(
     const reference = now;
     const { breakdown, raw } = buildFeatureVector(leader, stats, reference);
     const computedBaseProbability = calculateBaseProbability(raw, stats, leader, reference);
-    const baseProbability =
-      leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined
-        ? clampProbability(leader.manualAttritionRisk)
-        : computedBaseProbability;
-    const distributedProbabilities = distributeProbability(baseProbability, monthBuckets.length);
+    const manualRisk = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined
+      ? clampProbability(leader.manualAttritionRisk)
+      : null;
+    const manualDistributed3 = manualRisk !== null ? distributeProbability(manualRisk, 3) : null;
+    const computedDistributed = distributeProbability(computedBaseProbability, monthBuckets.length);
+    const distributedProbabilities = monthBuckets.map((_bucket: MonthBucket, index: number) => {
+      if (index < 3 && manualDistributed3 !== null) {
+        return manualDistributed3[index];
+      }
+      return computedDistributed[index] ?? 0;
+    });
     const probabilities: LeaderAttritionInsight['probabilities'] = monthBuckets.map((bucket: MonthBucket, index: number) => {
       const probability = distributedProbabilities[index] ?? 0;
       const key = `${normalizeCity(leader.city)}|${bucket.key}`;
@@ -331,7 +337,7 @@ export async function computeAttritionReport(
       };
     });
 
-    const cumulativeProbability = baseProbability;
+    const cumulativeProbability = manualRisk ?? computedBaseProbability;
 
     leaderInsights.push({
       leaderId: leader.id,
