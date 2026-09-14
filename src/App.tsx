@@ -632,45 +632,51 @@ function App() {
         <div className="metric-card">
           <div className="metric-number">{(() => {
             if (!attritionReport) return '—';
-            return attritionReport.expectedAttritions
-              .filter(entry => entry.monthIndex <= 6)
-              .reduce((sum, entry) => {
-                if (!currentCityFilter || entry.city === currentCityFilter) {
-                  return sum + entry.expectedDepartures;
+            let sum = 0;
+            for (const leader of leaders) {
+              if (leader.endDate) continue;
+              if (!currentCityFilter || leader.city === currentCityFilter) {
+                const attrition = attritionByLeader.get(leader.id);
+                if (attrition) {
+                  sum += getProbabilityForWindow(attrition, 6);
                 }
-                return sum;
-              }, 0)
-              .toFixed(1);
+              }
+            }
+            return sum.toFixed(1);
           })()}</div>
           <div className="metric-label">Мат. ожидание уходов за 6 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
         </div>
         <div className="metric-card">
           <div className="metric-number">{(() => {
             if (!attritionReport) return '—';
-            return attritionReport.expectedAttritions
-              .filter(entry => entry.monthIndex <= 9)
-              .reduce((sum, entry) => {
-                if (!currentCityFilter || entry.city === currentCityFilter) {
-                  return sum + entry.expectedDepartures;
+            let sum = 0;
+            for (const leader of leaders) {
+              if (leader.endDate) continue;
+              if (!currentCityFilter || leader.city === currentCityFilter) {
+                const attrition = attritionByLeader.get(leader.id);
+                if (attrition) {
+                  sum += getProbabilityForWindow(attrition, 9);
                 }
-                return sum;
-              }, 0)
-              .toFixed(1);
+              }
+            }
+            return sum.toFixed(1);
           })()}</div>
           <div className="metric-label">Мат. ожидание уходов за 9 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
         </div>
         <div className="metric-card">
           <div className="metric-number">{(() => {
             if (!attritionReport) return '—';
-            return attritionReport.expectedAttritions
-              .filter(entry => entry.monthIndex <= 12)
-              .reduce((sum, entry) => {
-                if (!currentCityFilter || entry.city === currentCityFilter) {
-                  return sum + entry.expectedDepartures;
+            let sum = 0;
+            for (const leader of leaders) {
+              if (leader.endDate) continue;
+              if (!currentCityFilter || leader.city === currentCityFilter) {
+                const attrition = attritionByLeader.get(leader.id);
+                if (attrition) {
+                  sum += getProbabilityForWindow(attrition, 12);
                 }
-                return sum;
-              }, 0)
-              .toFixed(1);
+              }
+            }
+            return sum.toFixed(1);
           })()}</div>
           <div className="metric-label">Мат. ожидание уходов за 12 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
         </div>
