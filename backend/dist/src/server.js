@@ -7,15 +7,14 @@ exports.prisma = void 0;
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const client_1 = require("@prisma/client");
 const leaders_1 = __importDefault(require("./routes/leaders"));
 const coffeeShops_1 = __importDefault(require("./routes/coffeeShops"));
 const audit_1 = __importDefault(require("./routes/audit"));
 const analytics_1 = __importDefault(require("./routes/analytics"));
+const prisma_1 = __importDefault(require("./prisma"));
+exports.prisma = prisma_1.default;
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const prisma = new client_1.PrismaClient();
-exports.prisma = prisma;
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3011;
 const parseOrigins = (value) => value
     ?.split(',')

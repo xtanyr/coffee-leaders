@@ -1,14 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 const express_1 = require("express");
-const client_1 = require("@prisma/client");
+const prisma_1 = __importDefault(require("../prisma"));
 exports.router = (0, express_1.Router)();
-const prisma = new client_1.PrismaClient();
 // GET /api/coffee-shops - Get all coffee shops
 exports.router.get('/', async (req, res) => {
     try {
-        const coffeeShops = await prisma.coffeeShop.findMany({
+        const coffeeShops = await prisma_1.default.coffeeShop.findMany({
             orderBy: { createdAt: 'desc' }
         });
         res.json(coffeeShops);
@@ -22,7 +24,7 @@ exports.router.get('/', async (req, res) => {
 exports.router.get('/city/:city', async (req, res) => {
     try {
         const { city } = req.params;
-        const coffeeShops = await prisma.coffeeShop.findMany({
+        const coffeeShops = await prisma_1.default.coffeeShop.findMany({
             where: { city },
             orderBy: { createdAt: 'desc' }
         });
@@ -37,7 +39,7 @@ exports.router.get('/city/:city', async (req, res) => {
 exports.router.post('/', async (req, res) => {
     try {
         const { name, city, openingDate } = req.body;
-        const coffeeShop = await prisma.coffeeShop.create({
+        const coffeeShop = await prisma_1.default.coffeeShop.create({
             data: {
                 name,
                 city,
@@ -56,7 +58,7 @@ exports.router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { name, city, openingDate } = req.body;
-        const coffeeShop = await prisma.coffeeShop.update({
+        const coffeeShop = await prisma_1.default.coffeeShop.update({
             where: { id: parseInt(id) },
             data: {
                 name,
@@ -75,7 +77,7 @@ exports.router.put('/:id', async (req, res) => {
 exports.router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        await prisma.coffeeShop.delete({
+        await prisma_1.default.coffeeShop.delete({
             where: { id: parseInt(id) },
         });
         res.status(204).send();

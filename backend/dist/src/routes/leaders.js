@@ -1,14 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 const express_1 = require("express");
-const client_1 = require("@prisma/client");
+const prisma_1 = __importDefault(require("../prisma"));
 exports.router = (0, express_1.Router)();
-const prisma = new client_1.PrismaClient();
 // GET /api/leaders - Get all leaders
 exports.router.get('/', async (req, res) => {
     try {
-        const leaders = await prisma.leader.findMany({
+        const leaders = await prisma_1.default.leader.findMany({
             orderBy: { createdAt: 'desc' }
         });
         res.json(leaders);
@@ -22,7 +24,7 @@ exports.router.get('/', async (req, res) => {
 exports.router.get('/city/:city', async (req, res) => {
     try {
         const { city } = req.params;
-        const leaders = await prisma.leader.findMany({
+        const leaders = await prisma_1.default.leader.findMany({
             where: { city },
             orderBy: { createdAt: 'desc' }
         });
@@ -36,8 +38,8 @@ exports.router.get('/city/:city', async (req, res) => {
 // GET /api/leaders/stats - Get statistics
 exports.router.get('/stats', async (req, res) => {
     try {
-        const totalLeaders = await prisma.leader.count();
-        const cityStats = await prisma.leader.groupBy({
+        const totalLeaders = await prisma_1.default.leader.count();
+        const cityStats = await prisma_1.default.leader.groupBy({
             by: ['city'],
             _count: {
                 id: true,
@@ -66,7 +68,7 @@ exports.router.get('/stats', async (req, res) => {
 exports.router.post('/', async (req, res) => {
     try {
         const { name, startDate, endDate, birthDate, city, coffeeShop, pipName, pipEndDate, pipSuccessChance, manualAttritionRisk } = req.body;
-        const leader = await prisma.leader.create({
+        const leader = await prisma_1.default.leader.create({
             data: {
                 name,
                 startDate: new Date(startDate),
@@ -92,7 +94,7 @@ exports.router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { name, startDate, endDate, birthDate, city, coffeeShop, pipName, pipEndDate, pipSuccessChance, manualAttritionRisk } = req.body;
-        const leader = await prisma.leader.update({
+        const leader = await prisma_1.default.leader.update({
             where: { id: parseInt(id) },
             data: {
                 name,
@@ -118,7 +120,7 @@ exports.router.put('/:id', async (req, res) => {
 exports.router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        await prisma.leader.delete({
+        await prisma_1.default.leader.delete({
             where: { id: parseInt(id) },
         });
         res.status(204).send();
