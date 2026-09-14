@@ -9,7 +9,6 @@ import {
   AttritionReport,
   CalendarForecast,
   LeaderAttritionInsight,
-  CalendarMonthForecast,
 } from './types';
 import { leadersApi, coffeeShopsApi, auditApi, analyticsApi } from './api';
 
@@ -24,18 +23,6 @@ const CITIES: City[] = [
 ];
 
 const ANALYTICS_HORIZON_MONTHS = 12;
-
-type CalendarCardData = {
-  monthKey: string;
-  label: string;
-  startDate: string;
-  endDate: string;
-  contextLabel: string;
-  expectedAttritions: number;
-  plannedOpenings: number;
-  netLeadersNeeded: number;
-  cities: CalendarMonthForecast['cities'];
-};
 
 const STORAGE_KEYS = {
   cityFilter: 'coffee-leaders:lastCityFilter',
@@ -76,12 +63,7 @@ function App() {
   const [latestAuditEntry, setLatestAuditEntry] = useState<AuditEntry | null>(null);
   const [auditEntries, setAuditEntries] = useState<AuditEntry[]>([]);
   const [attritionReport, setAttritionReport] = useState<AttritionReport | null>(null);
-  const [calendarForecast, setCalendarForecast] = useState<CalendarForecast | null>(null);
-  const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
-  const [analyticsError, setAnalyticsError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
-
-  const selectedCityLabel = currentCityFilter ? `для ${currentCityFilter}` : 'по всем городам';
 
   const attritionByLeader = useMemo(() => {
     const map = new Map<number, LeaderAttritionInsight>();
@@ -90,43 +72,6 @@ function App() {
     });
     return map;
   }, [attritionReport]);
-
-  const calendarCards = useMemo<CalendarCardData[]>(() => {
-    if (!calendarForecast) {
-      return [];
-    }
-
-    return calendarForecast.months.map(month => {
-      const targetCities = currentCityFilter
-        ? month.cities.filter(city => city.city === currentCityFilter)
-        : month.cities;
-
-      const aggregates = targetCities.reduce(
-        (acc, cityRow) => {
-          acc.expectedAttritions += cityRow.expectedAttritions;
-          acc.plannedOpenings += cityRow.plannedOpenings;
-          acc.netLeadersNeeded += cityRow.netLeadersNeeded;
-          return acc;
-        },
-        { expectedAttritions: 0, plannedOpenings: 0, netLeadersNeeded: 0 }
-      );
-
-      const totals = currentCityFilter ? aggregates : month.totals;
-      const citiesForCard = currentCityFilter ? targetCities : month.cities.slice(0, 4);
-
-      return {
-        monthKey: month.monthKey,
-        label: month.label,
-        startDate: month.startDate,
-        endDate: month.endDate,
-        contextLabel: selectedCityLabel,
-        expectedAttritions: totals.expectedAttritions,
-        plannedOpenings: totals.plannedOpenings,
-        netLeadersNeeded: totals.netLeadersNeeded,
-        cities: citiesForCard,
-      };
-    });
-  }, [calendarForecast, currentCityFilter, selectedCityLabel]);
 
   const getProbabilityForWindow = (leader: LeaderAttritionInsight, months: number) =>
     leader.probabilities
@@ -185,20 +130,11 @@ function App() {
   } | null>(null);
 
   const fetchAnalytics = useCallback(async () => {
-    setIsLoadingAnalytics(true);
-    setAnalyticsError(null);
     try {
-      const [reportRes, calendarRes] = await Promise.all([
-        analyticsApi.getAttritionReport(ANALYTICS_HORIZON_MONTHS),
-        analyticsApi.getCalendarForecast(ANALYTICS_HORIZON_MONTHS),
-      ]);
+      const reportRes = await analyticsApi.getAttritionReport(ANALYTICS_HORIZON_MONTHS);
       setAttritionReport(reportRes.data ?? null);
-      setCalendarForecast(calendarRes.data ?? null);
     } catch (error) {
       console.error('Error loading analytics:', error);
-      setAnalyticsError('Не удалось загрузить аналитические данные. Попробуйте позже.');
-    } finally {
-      setIsLoadingAnalytics(false);
     }
   }, []);
 

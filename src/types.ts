@@ -121,33 +121,3 @@ export interface AttritionReport {
   leaders: LeaderAttritionInsight[];
   expectedAttritions: ExpectedAttritionEntry[];
 }
-
-export interface CalendarCityBreakdown {
-  city: string;
-  expectedAttritions: number;
-  plannedOpenings: number;
-  netLeadersNeeded: number;
-}
-
-export interface CalendarMonthForecast {
-  monthIndex: number;
-  monthKey: string;
-  label: string;
-  startDate: string;
-  endDate: string;
-  cities: CalendarCityBreakdown[];
-  totals: {
-    expectedAttritions: number;
-    plannedOpenings: number;
-    netLeadersNeeded: number;
-  };
-}
-
-export interface CalendarForecast {
-  generatedAt: string;
-  horizonMonths: number;
-  months: CalendarMonthForecast[];
-  metadata: {
-    cities: string[];
-  };
-}

@@ -5,7 +5,6 @@ import {
   Stats,
   AuditEntry,
   AttritionReport,
-  CalendarForecast,
 } from './types';
 
 // Relative /api is proxied to the backend by src/setupProxy.js (dev server / pm2 on same host).
@@ -112,6 +111,4 @@ const ensureParams = (horizon?: number) =>
 export const analyticsApi = {
   getAttritionReport: (horizon?: number) =>
     api.get<AttritionReport | null>('/analytics/attrition', ensureParams(horizon)),
-  getCalendarForecast: (horizon?: number) =>
-    api.get<CalendarForecast | null>('/analytics/calendar', ensureParams(horizon)),
 };
