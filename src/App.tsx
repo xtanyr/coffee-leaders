@@ -677,6 +677,7 @@ function App() {
             if (!attritionReport) return '—';
             let sum = 0;
             for (const leader of leaders) {
+              if (leader.endDate) continue;
               if (!currentCityFilter || leader.city === currentCityFilter) {
                 if (leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined) {
                   sum += leader.manualAttritionRisk;

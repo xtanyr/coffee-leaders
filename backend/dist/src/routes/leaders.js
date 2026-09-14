@@ -78,7 +78,7 @@ exports.router.post('/', async (req, res) => {
                 coffeeShop,
                 pipName: pipName || null,
                 pipEndDate: pipEndDate ? new Date(pipEndDate) : null,
-                pipSuccessChance: pipSuccessChance ? parseInt(pipSuccessChance) : null,
+                pipSuccessChance: pipSuccessChance !== null && pipSuccessChance !== undefined && pipSuccessChance !== '' ? parseInt(pipSuccessChance) : null,
                 ...(manualAttritionRisk !== undefined && { manualAttritionRisk: manualAttritionRisk !== null ? parseFloat(manualAttritionRisk) : null }),
             },
         });
@@ -105,7 +105,7 @@ exports.router.put('/:id', async (req, res) => {
                 coffeeShop,
                 pipName: pipName !== undefined ? pipName : undefined,
                 pipEndDate: pipEndDate !== undefined ? (pipEndDate ? new Date(pipEndDate) : null) : undefined,
-                pipSuccessChance: pipSuccessChance !== undefined ? (pipSuccessChance ? parseInt(pipSuccessChance) : null) : undefined,
+                pipSuccessChance: pipSuccessChance !== undefined ? (pipSuccessChance !== null && pipSuccessChance !== '' ? parseInt(pipSuccessChance) : null) : undefined,
                 ...(manualAttritionRisk !== undefined && { manualAttritionRisk: manualAttritionRisk !== null ? parseFloat(manualAttritionRisk) : null }),
             },
         });
