@@ -72,18 +72,8 @@ router.get('/debug/novosibirsk', async (req, res) => {
     for (const leader of activeLeaders.filter(l => normalizeCity(l.city) === 'Новосибирск')) {
       const { raw } = buildFeatureVector(leader, stats, now);
       const computedBaseProbability = calculateBaseProbability(raw, stats, leader, now);
-      const manualRisk = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined
-        ? clampProbability(leader.manualAttritionRisk)
-        : null;
-      const manualDistributed3 = manualRisk !== null ? distributeProbability(manualRisk, 3) : null;
-      const computedDistributed = distributeProbability(computedBaseProbability, monthBuckets.length);
-      const baseProbability = manualRisk ?? computedBaseProbability;
-      const distributedProbabilities = monthBuckets.map((_bucket, index) => {
-        if (index < 3 && manualDistributed3 !== null) {
-          return manualDistributed3[index];
-        }
-        return computedDistributed[index] ?? 0;
-      });
+      const baseProbability = computedBaseProbability;
+      const distributedProbabilities = distributeProbability(baseProbability, monthBuckets.length);
       monthBuckets.forEach((bucket, index) => {
         const key = `${normalizeCity(leader.city)}|${bucket.key}`;
         expectedMap.set(key, (expectedMap.get(key) ?? 0) + (distributedProbabilities[index] ?? 0));

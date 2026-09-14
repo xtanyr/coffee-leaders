@@ -675,15 +675,20 @@ function App() {
         <div className="metric-card">
           <div className="metric-number">{(() => {
             if (!attritionReport) return '—';
-            return attritionReport.expectedAttritions
-              .filter(entry => entry.monthIndex <= 3)
-              .reduce((sum, entry) => {
-                if (!currentCityFilter || entry.city === currentCityFilter) {
-                  return sum + entry.expectedDepartures;
+            let sum = 0;
+            for (const leader of leaders) {
+              if (!currentCityFilter || leader.city === currentCityFilter) {
+                if (leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined) {
+                  sum += leader.manualAttritionRisk;
+                } else {
+                  const attrition = attritionByLeader.get(leader.id);
+                  if (attrition) {
+                    sum += getProbabilityForWindow(attrition, 3);
+                  }
                 }
-                return sum;
-              }, 0)
-              .toFixed(1);
+              }
+            }
+            return sum.toFixed(1);
           })()}</div>
           <div className="metric-label">Мат. ожидание уходов за 3 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
         </div>
@@ -963,18 +968,12 @@ function App() {
                       const displayValue3 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
                         ? leader.manualAttritionRisk 
                         : probability3;
-                      const displayValue6 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
-                        ? leader.manualAttritionRisk 
-                        : probability6;
-                      const displayValue9 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
-                        ? leader.manualAttritionRisk 
-                        : probability9;
-                      const displayValue12 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined 
-                        ? leader.manualAttritionRisk 
-                        : probability12;
-                      const isManual = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined;
+                      const displayValue6 = probability6;
+                      const displayValue9 = probability9;
+                      const displayValue12 = probability12;
+                      const isManual3 = leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined;
 
-                      const renderAttritionCell = (value: number | null) => (
+                      const renderAttritionCell = (value: number | null, isManual: boolean) => (
                         <td className={`attrition-cell ${value !== null ? 'probability-' + probabilityLevel(value) : ''}`}>
                           <div className="attrition-cell-values">
                             <span 
@@ -1005,10 +1004,10 @@ function App() {
                             {monthsWorked} мес.
                           </td>
                           <td>{leader.endDate ? new Date(leader.endDate).toLocaleDateString() : 'Работает'}</td>
-                          {renderAttritionCell(displayValue3)}
-                          {renderAttritionCell(displayValue6)}
-                          {renderAttritionCell(displayValue9)}
-                          {renderAttritionCell(displayValue12)}
+                          {renderAttritionCell(displayValue3, isManual3)}
+                          {renderAttritionCell(displayValue6, false)}
+                          {renderAttritionCell(displayValue9, false)}
+                          {renderAttritionCell(displayValue12, false)}
                           <td>
                             {leader.pipName && (
                               <div className={`pip-info ${
