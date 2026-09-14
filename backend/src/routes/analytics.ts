@@ -4,6 +4,14 @@ import prisma from '../prisma';
 import {
   computeAttritionReport,
   computeCalendarForecast,
+  calculateFeatureStats,
+  buildMonthBuckets,
+  buildExpectedAttritions,
+  normalizeCity,
+  buildFeatureVector,
+  calculateBaseProbability,
+  distributeProbability,
+  clampProbability,
 } from '../services/analytics/leaderAttrition';
 
 const router = Router();

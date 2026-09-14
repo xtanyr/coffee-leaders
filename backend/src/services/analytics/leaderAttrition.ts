@@ -20,7 +20,7 @@ interface FeatureStats {
   cityAverageTenureMonths: Record<string, number>;
 }
 
-function clampProbability(value: number): number {
+export function clampProbability(value: number): number {
   return Math.max(0, Math.min(1, value));
 }
 
@@ -33,7 +33,7 @@ function centeredLogistic(deltaMonths: number, scaleMonths = 6): number {
   return logistic - 0.5; // range [-0.5, 0.5]
 }
 
-function distributeProbability(totalProbability: number, bucketCount: number): number[] {
+export function distributeProbability(totalProbability: number, bucketCount: number): number[] {
   if (bucketCount === 0 || totalProbability <= 0) {
     return Array(bucketCount).fill(0);
   }
@@ -52,7 +52,7 @@ function determinePipStatus(leader: Leader, reference: Date): 'none' | 'active' 
   return new Date(leader.pipEndDate) < reference ? 'overdue' : 'active';
 }
 
-function buildMonthBuckets(now: Date, horizonMonths: number): MonthBucket[] {
+export function buildMonthBuckets(now: Date, horizonMonths: number): MonthBucket[] {
   const buckets: MonthBucket[] = [];
   const startOfCurrent = new Date(now.getFullYear(), now.getMonth(), 1);
   for (let i = 0; i < horizonMonths; i += 1) {
@@ -69,11 +69,11 @@ function buildMonthBuckets(now: Date, horizonMonths: number): MonthBucket[] {
   return buckets;
 }
 
-function normalizeCity(value: string): string {
+export function normalizeCity(value: string): string {
   return value.trim();
 }
 
-function buildExpectedAttritions(
+export function buildExpectedAttritions(
   leaders: Leader[],
   buckets: MonthBucket[],
   expectedMap: Map<string, number>
@@ -166,7 +166,7 @@ function getPipRiskFactor(leader: Leader, reference: Date): number {
   return 0.4;
 }
 
-function calculateBaseProbability(
+export function calculateBaseProbability(
   raw: FeatureVectorResult['raw'],
   stats: FeatureStats,
   leader: Leader,
@@ -452,7 +452,7 @@ export async function computeCalendarForecast(
   };
 }
 
-function calculateFeatureStats(leaders: Leader[], now: Date): FeatureStats {
+export function calculateFeatureStats(leaders: Leader[], now: Date): FeatureStats {
   const allTenures = leaders.map((leader) =>
     monthsBetween(leader.startDate, leader.endDate ?? now)
   );
@@ -487,7 +487,7 @@ function calculateFeatureStats(leaders: Leader[], now: Date): FeatureStats {
   };
 }
 
-function buildFeatureVector(
+export function buildFeatureVector(
   leader: Leader,
   stats: FeatureStats,
   reference: Date
