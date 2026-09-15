@@ -76,7 +76,10 @@ router.post('/', async (req, res) => {
       pipName,
       pipEndDate,
       pipSuccessChance,
-      manualAttritionRisk 
+      manualAttritionRisk,
+      manualAttritionRisk6,
+      manualAttritionRisk9,
+      manualAttritionRisk12
     } = req.body;
 
     const leader = await prisma.leader.create({
@@ -91,6 +94,9 @@ router.post('/', async (req, res) => {
         pipEndDate: pipEndDate ? new Date(pipEndDate) : null,
         pipSuccessChance: pipSuccessChance !== null && pipSuccessChance !== undefined && pipSuccessChance !== '' ? parseInt(pipSuccessChance) : null,
         ...(manualAttritionRisk !== undefined && { manualAttritionRisk: manualAttritionRisk !== null ? parseFloat(manualAttritionRisk) : null }),
+        ...(manualAttritionRisk6 !== undefined && { manualAttritionRisk6: manualAttritionRisk6 !== null ? parseFloat(manualAttritionRisk6) : null }),
+        ...(manualAttritionRisk9 !== undefined && { manualAttritionRisk9: manualAttritionRisk9 !== null ? parseFloat(manualAttritionRisk9) : null }),
+        ...(manualAttritionRisk12 !== undefined && { manualAttritionRisk12: manualAttritionRisk12 !== null ? parseFloat(manualAttritionRisk12) : null }),
       },
     });
 
@@ -115,7 +121,10 @@ router.put('/:id', async (req, res) => {
       pipName,
       pipEndDate,
       pipSuccessChance,
-      manualAttritionRisk 
+      manualAttritionRisk,
+      manualAttritionRisk6,
+      manualAttritionRisk9,
+      manualAttritionRisk12
     } = req.body;
 
     const leader = await prisma.leader.update({
@@ -131,6 +140,9 @@ router.put('/:id', async (req, res) => {
         pipEndDate: pipEndDate !== undefined ? (pipEndDate ? new Date(pipEndDate) : null) : undefined,
         pipSuccessChance: pipSuccessChance !== undefined ? (pipSuccessChance !== null && pipSuccessChance !== '' ? parseInt(pipSuccessChance) : null) : undefined,
         ...(manualAttritionRisk !== undefined && { manualAttritionRisk: manualAttritionRisk !== null ? parseFloat(manualAttritionRisk) : null }),
+        ...(manualAttritionRisk6 !== undefined && { manualAttritionRisk6: manualAttritionRisk6 !== null ? parseFloat(manualAttritionRisk6) : null }),
+        ...(manualAttritionRisk9 !== undefined && { manualAttritionRisk9: manualAttritionRisk9 !== null ? parseFloat(manualAttritionRisk9) : null }),
+        ...(manualAttritionRisk12 !== undefined && { manualAttritionRisk12: manualAttritionRisk12 !== null ? parseFloat(manualAttritionRisk12) : null }),
       },
     });
 
