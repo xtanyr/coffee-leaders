@@ -644,7 +644,7 @@ function App() {
         </div>
         <div className="metric-card">
           <div className="metric-number">{pipLeadersCount}</div>
-          <div className="metric-label">На ИПР {currentCityFilter ? `в ${currentCityFilter}` : 'в компании'}</div>
+          <div className="metric-label">На ИПВ {currentCityFilter ? `в ${currentCityFilter}` : 'в компании'}</div>
         </div>
         <div className="metric-card">
           <div className="metric-number">{(() => {
@@ -914,7 +914,7 @@ function App() {
                      <th className="sortable">
                        Риск ухода (12 мес)
                      </th>
-                     <th>ИПР</th>
+                     <th>ИПВ</th>
                     <th>Действия</th>
                   </tr>
                 </thead>
@@ -1014,12 +1014,12 @@ function App() {
                                         window.open(leader.pipName, '_blank', 'noopener,noreferrer');
                                       } else {
                                         // Если не URL, ищем в Google Таблицах
-                                        const searchQuery = encodeURIComponent(`ИПР ${leader.pipName} ${leader.name}`);
+                                        const searchQuery = encodeURIComponent(`ИПВ ${leader.pipName} ${leader.name}`);
                                         window.open(`https://docs.google.com/spreadsheets/?q=${searchQuery}`, '_blank', 'noopener,noreferrer');
                                       }
                                     }
                                   }}
-                                  title={leader.pipName ? `Открыть ИПР для ${leader.name}` : 'Нет ИПР'}
+                                  title={leader.pipName ? `Открыть ИПВ для ${leader.name}` : 'Нет ИПВ'}
                                   style={{ 
                                     cursor: leader.pipName ? 'pointer' : 'default',
                                     textDecoration: leader.pipName ? 'underline' : 'none'
@@ -1364,10 +1364,10 @@ function App() {
                     </select>
                   </div>
                   
-                  <h3 className="form-section-title">План развития (ИПР)</h3>
+                  <h3 className="form-section-title">План развития (ИПВ)</h3>
                   
                   <div className="form-group">
-                    <label className="form-label">Ссылка на ИПР</label>
+                    <label className="form-label">Ссылка на ИПВ</label>
                     <input
                       type="text"
                       className="form-input"
@@ -1378,7 +1378,7 @@ function App() {
                   </div>
                   
                   <div className="form-group">
-                    <label className="form-label">Дата окончания ИПР</label>
+                    <label className="form-label">Дата окончания ИПВ</label>
                     <input
                       type="date"
                       className="form-input"
@@ -1407,7 +1407,7 @@ function App() {
                       onClick={clearPipFields}
                       disabled={!hasPipValues}
                     >
-                      Удалить ИПР
+                      Удалить ИПВ
                     </button>
                   </div>
                   

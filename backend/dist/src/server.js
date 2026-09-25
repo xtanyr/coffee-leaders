@@ -16,6 +16,7 @@ exports.prisma = prisma_1.default;
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3011;
+const HOST = process.env.HOST || '127.0.0.1';
 const parseOrigins = (value) => value
     ?.split(',')
     .map(origin => origin.trim())
@@ -57,7 +58,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something went wrong!' });
 });
 // Start server
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
+app.listen(PORT, HOST, () => {
+    console.log(`Server running on ${HOST}:${PORT}`);
 });
 //# sourceMappingURL=server.js.map

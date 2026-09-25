@@ -576,7 +576,7 @@ body {
   margin-bottom: 20px;
 }
 
-/* ИПР Info Styles */
+/* ИПВ Info Styles */
 .pip-info {
   background-color: #f8f9fa;
   border-left: 4px solid #59c9a5;
@@ -646,7 +646,7 @@ body {
   color: #721c24;
 }
 
-/* Highlight for ИПР in progress */
+/* Highlight for ИПВ in progress */
 .pip-in-progress {
   background-color: #e7f5ff;
   border-left-color: #4dabf7;
@@ -656,7 +656,7 @@ body {
   color: #1971c2;
 }
 
-/* Highlight for ИПР at risk */
+/* Highlight for ИПВ at risk */
 .pip-at-risk {
   background-color: #fff0f3;
   border-left-color: #ff6b6b;
@@ -667,7 +667,7 @@ body {
   color: #c92a2a;
 }
 
-/* Highlight for ИПР completed */
+/* Highlight for ИПВ completed */
 .pip-completed {
   background-color: #ebfbee;
   border-left-color: #40c057;
@@ -1110,7 +1110,7 @@ body {
   }
 }
 
-/* ИПР link styles */
+/* ИПВ link styles */
 .pip-link {
   color: #007bff !important;
   text-decoration: underline;

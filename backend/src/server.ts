@@ -11,6 +11,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3011;
+const HOST = process.env.HOST || '127.0.0.1';
 
 const parseOrigins = (value?: string): string[] =>
   value
@@ -66,8 +67,8 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // Start server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server running on ${HOST}:${PORT}`);
 });
 
 export { prisma };

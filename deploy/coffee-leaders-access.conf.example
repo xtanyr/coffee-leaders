@@ -1,0 +1,6 @@
+# Install as /etc/nginx/snippets/coffee-leaders-access.conf.
+# This intentionally denies everyone until the access policy is configured.
+# Add the organization's VPN/office CIDRs, SSO auth_request rules, or another
+# approved access control here. Keep the gate in the HTTPS server block so it
+# protects both the frontend and /api.
+deny all;

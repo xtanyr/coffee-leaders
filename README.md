@@ -11,12 +11,34 @@ cp backend/.env.example backend/.env
 
 | Variable | Purpose |
 |----------|---------|
-| `PORT` | Frontend dev server port (default `3100`) |
-| `PUBLIC_URL` | Optional public URL when not using `localhost` |
-| `CORS_ORIGIN` | Comma-separated origins allowed to call the API |
-| `BACKEND_PORT` / `REACT_APP_API_PROXY` | Where `/api` is proxied in development |
+| `PORT` | Frontend development server port (default `3100`) |
+| `PUBLIC_URL` | Optional URL for the development server |
+| `BACKEND_PORT` / `REACT_APP_API_PROXY` | Where `/api` is proxied during development |
+| `BACKEND_HOST` | Backend bind address; defaults to `127.0.0.1` |
 
-The frontend uses relative `/api` URLs (no hardcoded host). On a VPS, set `PUBLIC_URL` and `CORS_ORIGIN` to the URL users open in the browser, e.g. `http://your-host:3100`.
+The frontend uses relative `/api` URLs, so a production domain does not need to be embedded in the frontend build. `CORS_ORIGIN` is only needed if the browser calls the API from a different origin; same-origin `/api` proxying does not need CORS.
+
+## Production deployment
+
+Production serves the static React build through Nginx and keeps the API on loopback. Do not run the Create React App development server as the public production frontend.
+
+1. Point an A record for the chosen hostname to the server's public IP.
+2. Build the frontend and backend:
+
+   ```bash
+   npm ci
+   npm run build
+   npm --prefix backend ci
+   npm --prefix backend run build
+   ```
+
+3. Keep the production `backend/.env` and its `DATABASE_URL` pointed at the existing SQLite database. Back up and preserve that database file during deployment.
+4. Start the backend with `pm2 start ecosystem.production.config.js` and save the PM2 process list with `pm2 save`.
+5. Configure Nginx from [deploy/nginx.conf.example](deploy/nginx.conf.example). Update the hostname, build path, and certificate paths. Obtain the TLS certificate before enabling the final HTTPS server block.
+6. Install [deploy/coffee-leaders-access.conf.example](deploy/coffee-leaders-access.conf.example) as `/etc/nginx/snippets/coffee-leaders-access.conf` and replace its default `deny all` with the approved VPN, SSO, or allowlist policy. The include is required and protects both the UI and API.
+7. Allow inbound TCP `80` and `443` for Nginx. Do not expose `3100` or `3011` publicly; the API binds to `127.0.0.1:3011` by default.
+
+The Nginx template uses the same hostname for the UI and `/api`, and redirects HTTP to HTTPS. If access must be internal-only, configure internal DNS or VPN access as well as the Nginx gate. The existing `ecosystem.config.js` remains for development; production uses `ecosystem.production.config.js`.
 
 ## Available Scripts
 

@@ -1,4 +1,4 @@
-// Copy .env.example to .env and set PUBLIC_URL / CORS_ORIGIN for your deployment host.
+// Development only. Production uses ecosystem.production.config.js and Nginx.
 require('dotenv').config();
 
 const frontendPort = process.env.PORT || 3100;
@@ -20,7 +20,7 @@ frontendEnv.BACKEND_PORT = String(backendPort);
 
 const backendEnv = {
   NODE_ENV: 'development',
-  HOST: process.env.BACKEND_HOST || '0.0.0.0',
+  HOST: process.env.BACKEND_HOST || '127.0.0.1',
   PORT: backendPort,
 };
 
