@@ -1,13 +1,105 @@
+:root {
+  color-scheme: light;
+  --color-canvas: #f4f6f3;
+  --color-surface: #ffffff;
+  --color-surface-muted: #edf3ef;
+  --color-surface-muted-rgb: 237, 243, 239;
+  --color-text: #24342c;
+  --color-text-rgb: 36, 52, 44;
+  --color-text-muted: #66746c;
+  --color-border: #dbe3dd;
+  --color-border-rgb: 219, 227, 221;
+  --color-brand: #276a54;
+  --color-brand-hover: #1d5844;
+  --color-brand-soft: #e5f0e9;
+  --color-brand-rgb: 39, 106, 84;
+  --color-danger: #b94f46;
+  --color-danger-hover: #a33f38;
+  --color-danger-soft: #faece9;
+  --color-danger-rgb: 185, 79, 70;
+  --color-warning: #95620d;
+  --color-warning-soft: #fff4d8;
+  --color-warning-rgb: 149, 98, 13;
+  --color-success: #2f704d;
+  --color-success-soft: #eaf4ec;
+  --color-success-rgb: 47, 112, 77;
+  --color-info: #286887;
+  --color-info-soft: #eaf3f8;
+  --color-info-rgb: 40, 104, 135;
+  --color-on-brand: #ffffff;
+  --shadow-panel: 0 1px 3px rgba(36, 52, 44, 0.05), 0 8px 24px rgba(36, 52, 44, 0.04);
+  --shadow-overlay: 0 18px 48px rgba(36, 52, 44, 0.2);
+  --radius-control: 10px;
+  --radius-panel: 14px;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-ui);
+  color: var(--color-text);
+  background: var(--color-canvas);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(var(--color-brand-rgb), 0.4);
+  outline-offset: 2px;
+}
+
+html {
+  scrollbar-color: var(--color-border) var(--color-canvas);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-canvas);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border: 2px solid var(--color-canvas);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

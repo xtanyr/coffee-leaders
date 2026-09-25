@@ -751,78 +751,18 @@ function App() {
       </div>
 
       <div className="main-content">
-        <div className="tab-buttons" style={{
-          display: 'flex',
-          gap: '15px',
-          marginBottom: '30px',
-          justifyContent: 'center',
-          flexWrap: 'wrap'
-        }}>
+        <div className="tab-buttons">
           <button
             className={`tab-btn ${activeTab === 'leader' ? 'active' : ''}`}
+            aria-pressed={activeTab === 'leader'}
             onClick={() => setActiveTab('leader')}
-            style={{
-              padding: '12px 28px',
-              border: '2px solid #59c9a5ff',
-              background: activeTab === 'leader' ? '#59c9a5ff' : 'white',
-              color: activeTab === 'leader' ? 'white' : '#071013ff',
-              borderRadius: '25px',
-              cursor: 'pointer',
-              fontWeight: 600,
-              fontSize: '1rem',
-              transition: 'all 0.3s ease',
-              boxShadow: activeTab === 'leader' 
-                ? '0 6px 20px rgba(89, 201, 165, 0.4)' 
-                : '0 4px 15px rgba(89, 201, 165, 0.2)',
-            }}
-            onMouseOver={(e) => {
-              if (activeTab !== 'leader') {
-                e.currentTarget.style.background = '#f3e8eeff';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(89, 201, 165, 0.3)';
-              }
-            }}
-            onMouseOut={(e) => {
-              if (activeTab !== 'leader') {
-                e.currentTarget.style.background = 'white';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 15px rgba(89, 201, 165, 0.2)';
-              }
-            }}
           >
             Показать Лидеров
           </button>
           <button
             className={`tab-btn ${activeTab === 'coffeeShop' ? 'active' : ''}`}
+            aria-pressed={activeTab === 'coffeeShop'}
             onClick={() => setActiveTab('coffeeShop')}
-            style={{
-              padding: '12px 28px',
-              border: '2px solid #ff5a5fff',
-              background: activeTab === 'coffeeShop' ? '#ff5a5fff' : 'white',
-              color: activeTab === 'coffeeShop' ? 'white' : '#071013ff',
-              borderRadius: '25px',
-              cursor: 'pointer',
-              fontWeight: 600,
-              fontSize: '1rem',
-              transition: 'all 0.3s ease',
-              boxShadow: activeTab === 'coffeeShop' 
-                ? '0 6px 20px rgba(255, 90, 95, 0.4)' 
-                : '0 4px 15px rgba(255, 90, 95, 0.2)',
-            }}
-            onMouseOver={(e) => {
-              if (activeTab !== 'coffeeShop') {
-                e.currentTarget.style.background = '#f3e8eeff';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 90, 95, 0.3)';
-              }
-            }}
-            onMouseOut={(e) => {
-              if (activeTab !== 'coffeeShop') {
-                e.currentTarget.style.background = 'white';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 90, 95, 0.2)';
-              }
-            }}
           >
             Показать Кофейни
           </button>
@@ -884,38 +824,56 @@ function App() {
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th className="sortable" onClick={() => handleSort('name')}>
-                      ФИО {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    <th scope="col" className="sortable-column" aria-sort={sortField === 'name' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                      <button type="button" className="table-sort-button" onClick={() => handleSort('name')}>
+                        <span>ФИО</span>
+                        <span aria-hidden="true">{sortField === 'name' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</span>
+                      </button>
                     </th>
-                    <th className="sortable" onClick={() => handleSort('age')}>
-                      Возраст {sortField === 'age' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    <th scope="col" className="sortable-column" aria-sort={sortField === 'age' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                      <button type="button" className="table-sort-button" onClick={() => handleSort('age')}>
+                        <span>Возраст</span>
+                        <span aria-hidden="true">{sortField === 'age' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</span>
+                      </button>
                     </th>
-                    <th className="sortable" onClick={() => handleSort('city')}>
-                      Город {sortField === 'city' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    <th scope="col" className="sortable-column" aria-sort={sortField === 'city' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                      <button type="button" className="table-sort-button" onClick={() => handleSort('city')}>
+                        <span>Город</span>
+                        <span aria-hidden="true">{sortField === 'city' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</span>
+                      </button>
                     </th>
-                    <th className="sortable" onClick={() => handleSort('coffeeShop')}>
-                      Отделение {sortField === 'coffeeShop' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    <th scope="col" className="sortable-column" aria-sort={sortField === 'coffeeShop' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                      <button type="button" className="table-sort-button" onClick={() => handleSort('coffeeShop')}>
+                        <span>Отделение</span>
+                        <span aria-hidden="true">{sortField === 'coffeeShop' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</span>
+                      </button>
                     </th>
-                    <th className="sortable" onClick={() => handleSort('worktime')}>
-                      Стаж работы {sortField === 'worktime' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    <th scope="col" className="sortable-column" aria-sort={sortField === 'worktime' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                      <button type="button" className="table-sort-button" onClick={() => handleSort('worktime')}>
+                        <span>Стаж работы</span>
+                        <span aria-hidden="true">{sortField === 'worktime' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</span>
+                      </button>
                     </th>
-                    <th className="sortable" onClick={() => handleSort('endDate')}>
-                      Дата увольнения {sortField === 'endDate' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    <th scope="col" className="sortable-column" aria-sort={sortField === 'endDate' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                      <button type="button" className="table-sort-button" onClick={() => handleSort('endDate')}>
+                        <span>Дата увольнения</span>
+                        <span aria-hidden="true">{sortField === 'endDate' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</span>
+                      </button>
                     </th>
-                     <th className="sortable">
+                     <th scope="col">
                        Риск ухода (3 мес)
                      </th>
-                     <th className="sortable">
+                     <th scope="col">
                        Риск ухода (6 мес)
                      </th>
-                     <th className="sortable">
+                     <th scope="col">
                        Риск ухода (9 мес)
                      </th>
-                     <th className="sortable">
+                     <th scope="col">
                        Риск ухода (12 мес)
                      </th>
-                     <th>ИПВ</th>
-                    <th>Действия</th>
+                     <th scope="col">ИПВ</th>
+                    <th scope="col">Действия</th>
                   </tr>
                 </thead>
                 <tbody>

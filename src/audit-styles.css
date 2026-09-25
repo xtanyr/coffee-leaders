@@ -10,7 +10,7 @@
 .audit-table td {
   padding: 0.75rem;
   text-align: left;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
   vertical-align: top;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -26,31 +26,30 @@
 .audit-table th:nth-child(6) { width: 10%; }
 
 .audit-table th {
-  background-color: #f8fafc;
+  background-color: var(--color-surface-muted);
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-text);
   white-space: nowrap;
 }
 
 .audit-table tr:hover {
-  background-color: #f8fafc;
+  background-color: var(--color-surface-muted);
 }
 
 /* Form Controls */
 .form-input-sm {
   width: 100%;
-  padding: 0.375rem 0.5rem;
+  padding: 0.5rem 0.625rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.375rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .form-input-sm:focus {
-  border-color: #60a5fa;
-  outline: 0;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(var(--color-brand-rgb), 0.18);
 }
 
 .form-select-sm {
@@ -58,9 +57,9 @@
   padding: 0.375rem 1.75rem 0.375rem 0.5rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.375rem;
-  background-color: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background-color: var(--color-surface);
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 0.5rem center;
@@ -69,9 +68,8 @@
 }
 
 .form-select-sm:focus {
-  border-color: #60a5fa;
-  outline: 0;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(var(--color-brand-rgb), 0.18);
 }
 
 textarea.form-input-sm {
@@ -88,7 +86,7 @@ textarea.form-input-sm {
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.25rem;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-control);
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   border: 1px solid transparent;
@@ -101,39 +99,40 @@ textarea.form-input-sm {
 }
 
 .btn-primary {
-  color: white;
-  background-color: #3b82f6;
+  color: var(--color-on-brand);
+  background-color: var(--color-brand);
 }
 
 .btn-primary:hover {
-  background-color: #2563eb;
+  background-color: var(--color-brand-hover);
 }
 
 .btn-success {
-  color: white;
-  background-color: #10b981;
+  color: var(--color-on-brand);
+  background-color: var(--color-brand);
 }
 
 .btn-success:hover {
-  background-color: #059669;
+  background-color: var(--color-brand-hover);
 }
 
 .btn-danger {
-  color: white;
-  background-color: #ef4444;
+  color: var(--color-on-brand);
+  background-color: var(--color-danger);
 }
 
 .btn-danger:hover {
-  background-color: #dc2626;
+  background-color: var(--color-danger-hover);
 }
 
 .btn-secondary {
-  color: #1e293b;
-  background-color: #e2e8f0;
+  color: var(--color-text);
+  background-color: var(--color-surface-muted);
+  border-color: var(--color-border);
 }
 
 .btn-secondary:hover {
-  background-color: #cbd5e1;
+  background-color: var(--color-border);
 }
 
 .btn:disabled {
@@ -165,8 +164,8 @@ textarea.form-input-sm {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin: 1rem 0;
-  border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--color-border);
   max-width: 100%;
 }
 
@@ -174,9 +173,9 @@ textarea.form-input-sm {
 .audit-empty {
   padding: 2rem;
   text-align: center;
-  color: #64748b;
-  background-color: #f8fafc;
-  border-radius: 0.5rem;
+  color: var(--color-text-muted);
+  background-color: var(--color-surface-muted);
+  border-radius: var(--radius-control);
   margin: 1rem 0;
 }
 
@@ -185,9 +184,10 @@ textarea.form-input-sm {
   max-width: 800px;
   margin: 0 auto;
   padding: 1.5rem;
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-panel);
 }
 
 .audit-form .form-group {
@@ -198,7 +198,7 @@ textarea.form-input-sm {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: #1e293b;
+  color: var(--color-text);
 }
 
 .audit-form .form-input,
@@ -208,11 +208,11 @@ textarea.form-input-sm {
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
   line-height: 1.5;
-  color: #1e293b;
-  background-color: white;
+  color: var(--color-text);
+  background-color: var(--color-surface);
   background-clip: padding-box;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.375rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
@@ -224,7 +224,6 @@ textarea.form-input {
 .audit-form .form-input:focus,
 .audit-form .form-select:focus,
 .audit-form textarea:focus {
-  border-color: #60a5fa;
-  outline: 0;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(var(--color-brand-rgb), 0.18);
 }
