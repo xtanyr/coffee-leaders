@@ -588,132 +588,157 @@ function App() {
         ))}
       </div>
 
-      <div className="metrics-grid">
-        <div className="metric-card">
-          <div className="metric-number">{(() => {
-            const activeLeaders = leaders.filter(leader => !leader.endDate);
-            if (activeLeaders.length === 0) return '0';
+      <div className="metrics-grid" aria-label="Ключевые показатели">
+        <section className="metric-card metric-group">
+          <h2 className="metric-group-title">Средний стаж</h2>
+          <div className="metric-group-items metric-group-items--three">
+            <div className="metric-item">
+              <div className="metric-number">{(() => {
+                const activeLeaders = leaders.filter(leader => !leader.endDate);
+                if (activeLeaders.length === 0) return '0';
 
-            const totalMonths = activeLeaders.reduce((sum, leader) => {
-              const startDate = new Date(leader.startDate);
-              const months = Math.floor((new Date().getTime() - startDate.getTime()) / (30.44 * 24 * 60 * 60 * 1000));
-              return sum + months;
-            }, 0);
+                const totalMonths = activeLeaders.reduce((sum, leader) => {
+                  const startDate = new Date(leader.startDate);
+                  const months = Math.floor((new Date().getTime() - startDate.getTime()) / (30.44 * 24 * 60 * 60 * 1000));
+                  return sum + months;
+                }, 0);
 
-            return Math.round(totalMonths / activeLeaders.length);
-          })()} мес.</div>
-          <div className="metric-label">Средний стаж активных</div>
-        </div>
-        <div className="metric-card">
-          <div className="metric-number">{(() => {
-            const firedLeaders = leaders.filter(leader => leader.endDate);
-            if (firedLeaders.length === 0) return '0';
+                return Math.round(totalMonths / activeLeaders.length);
+              })()} мес.</div>
+              <div className="metric-label">Активные<br />по компании</div>
+            </div>
+            <div className="metric-item">
+              <div className="metric-number">{(() => {
+                const firedLeaders = leaders.filter(leader => leader.endDate);
+                if (firedLeaders.length === 0) return '0';
 
-            const totalMonths = firedLeaders.reduce((sum, leader) => {
-              const startDate = new Date(leader.startDate);
-              const endDate = new Date(leader.endDate!);
-              const months = Math.floor((endDate.getTime() - startDate.getTime()) / (30.44 * 24 * 60 * 60 * 1000));
-              return sum + months;
-            }, 0);
+                const totalMonths = firedLeaders.reduce((sum, leader) => {
+                  const startDate = new Date(leader.startDate);
+                  const endDate = new Date(leader.endDate!);
+                  const months = Math.floor((endDate.getTime() - startDate.getTime()) / (30.44 * 24 * 60 * 60 * 1000));
+                  return sum + months;
+                }, 0);
 
-            return Math.round(totalMonths / firedLeaders.length);
-          })()} мес.</div>
-          <div className="metric-label">Средний стаж уволенных</div>
-        </div>
-        <div className="metric-card">
-          <div className="metric-number">{(() => {
-            const cityLeaders = currentCityFilter
-              ? leaders.filter(leader => leader.city === currentCityFilter)
-              : leaders;
-            if (cityLeaders.length === 0) return '0';
+                return Math.round(totalMonths / firedLeaders.length);
+              })()} мес.</div>
+              <div className="metric-label">Уволенные<br />по компании</div>
+            </div>
+            <div className="metric-item">
+              <div className="metric-number">{(() => {
+                const cityLeaders = currentCityFilter
+                  ? leaders.filter(leader => leader.city === currentCityFilter)
+                  : leaders;
+                if (cityLeaders.length === 0) return '0';
 
-            const totalMonths = cityLeaders.reduce((sum, leader) => {
-              const startDate = new Date(leader.startDate);
-              const referenceDate = leader.endDate ? new Date(leader.endDate) : new Date();
-              const months = Math.floor((referenceDate.getTime() - startDate.getTime()) / (30.44 * 24 * 60 * 60 * 1000));
-              return sum + months;
-            }, 0);
+                const totalMonths = cityLeaders.reduce((sum, leader) => {
+                  const startDate = new Date(leader.startDate);
+                  const referenceDate = leader.endDate ? new Date(leader.endDate) : new Date();
+                  const months = Math.floor((referenceDate.getTime() - startDate.getTime()) / (30.44 * 24 * 60 * 60 * 1000));
+                  return sum + months;
+                }, 0);
 
-            return Math.round(totalMonths / cityLeaders.length);
-          })()} мес.</div>
-          <div className="metric-label">Средний стаж в {currentCityFilter || 'компании'}</div>
-        </div>
-        <div className="metric-card">
-          <div className="metric-number">{filteredLeaders.length}</div>
-          <div className="metric-label">Лидеров {currentCityFilter ? `в ${currentCityFilter}` : 'всего'}</div>
-        </div>
-        <div className="metric-card">
-          <div className="metric-number">{pipLeadersCount}</div>
-          <div className="metric-label">На ИПВ {currentCityFilter ? `в ${currentCityFilter}` : 'в компании'}</div>
-        </div>
-        <div className="metric-card">
-          <div className="metric-number">{(() => {
-            if (!attritionReport) return '—';
-            let sum = 0;
-            for (const leader of attritionReport.leaders) {
-              if (!currentCityFilter || leader.city === currentCityFilter) {
-                if (leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined) {
-                  sum += leader.manualAttritionRisk;
-                } else {
-                  sum += getProbabilityForWindow(leader, 3);
+                return Math.round(totalMonths / cityLeaders.length);
+              })()} мес.</div>
+              <div className="metric-label">Город: {currentCityFilter || 'вся компания'}</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="metric-card metric-group">
+          <div className="metric-group-heading">
+            <h2 className="metric-group-title">Лидеры</h2>
+            <div className="metric-group-scope">
+              {currentCityFilter || 'Компания'}{showOnlyActive ? ' · активные' : ''}
+            </div>
+          </div>
+          <div className="metric-group-items metric-group-items--two">
+            <div className="metric-item">
+              <div className="metric-number">{filteredLeaders.length}</div>
+              <div className="metric-label">Всего</div>
+            </div>
+            <div className="metric-item">
+              <div className="metric-number">{pipLeadersCount}</div>
+              <div className="metric-label">На ИПВ</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="metric-card metric-group metric-group--forecast">
+          <div className="metric-group-heading">
+            <h2 className="metric-group-title">Мат. ожидание уходов</h2>
+            <div className="metric-group-scope">{currentCityFilter || 'Все города'}</div>
+          </div>
+          <div className="metric-group-items metric-group-items--four">
+            <div className="metric-item">
+              <div className="metric-number">{(() => {
+                if (!attritionReport) return '—';
+                let sum = 0;
+                for (const leader of attritionReport.leaders) {
+                  if (!currentCityFilter || leader.city === currentCityFilter) {
+                    if (leader.manualAttritionRisk !== null && leader.manualAttritionRisk !== undefined) {
+                      sum += leader.manualAttritionRisk;
+                    } else {
+                      sum += getProbabilityForWindow(leader, 3);
+                    }
+                  }
                 }
-              }
-            }
-            return sum.toFixed(1);
-          })()}</div>
-          <div className="metric-label">Мат. ожидание уходов за 3 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
-        </div>
-        <div className="metric-card">
-          <div className="metric-number">{(() => {
-            if (!attritionReport) return '—';
-            let sum = 0;
-            for (const leader of attritionReport.leaders) {
-              if (!currentCityFilter || leader.city === currentCityFilter) {
-                if (leader.manualAttritionRisk6 !== null && leader.manualAttritionRisk6 !== undefined) {
-                  sum += leader.manualAttritionRisk6;
-                } else {
-                  sum += getProbabilityForWindow(leader, 6);
+                return `${sum.toFixed(1)} чел.`;
+              })()}</div>
+              <div className="metric-label">За 3 мес.</div>
+            </div>
+            <div className="metric-item">
+              <div className="metric-number">{(() => {
+                if (!attritionReport) return '—';
+                let sum = 0;
+                for (const leader of attritionReport.leaders) {
+                  if (!currentCityFilter || leader.city === currentCityFilter) {
+                    if (leader.manualAttritionRisk6 !== null && leader.manualAttritionRisk6 !== undefined) {
+                      sum += leader.manualAttritionRisk6;
+                    } else {
+                      sum += getProbabilityForWindow(leader, 6);
+                    }
+                  }
                 }
-              }
-            }
-            return sum.toFixed(1);
-          })()}</div>
-          <div className="metric-label">Мат. ожидание уходов за 6 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
-        </div>
-        <div className="metric-card">
-          <div className="metric-number">{(() => {
-            if (!attritionReport) return '—';
-            let sum = 0;
-            for (const leader of attritionReport.leaders) {
-              if (!currentCityFilter || leader.city === currentCityFilter) {
-                if (leader.manualAttritionRisk9 !== null && leader.manualAttritionRisk9 !== undefined) {
-                  sum += leader.manualAttritionRisk9;
-                } else {
-                  sum += getProbabilityForWindow(leader, 9);
+                return `${sum.toFixed(1)} чел.`;
+              })()}</div>
+              <div className="metric-label">За 6 мес.</div>
+            </div>
+            <div className="metric-item">
+              <div className="metric-number">{(() => {
+                if (!attritionReport) return '—';
+                let sum = 0;
+                for (const leader of attritionReport.leaders) {
+                  if (!currentCityFilter || leader.city === currentCityFilter) {
+                    if (leader.manualAttritionRisk9 !== null && leader.manualAttritionRisk9 !== undefined) {
+                      sum += leader.manualAttritionRisk9;
+                    } else {
+                      sum += getProbabilityForWindow(leader, 9);
+                    }
+                  }
                 }
-              }
-            }
-            return sum.toFixed(1);
-          })()}</div>
-          <div className="metric-label">Мат. ожидание уходов за 9 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
-        </div>
-        <div className="metric-card">
-          <div className="metric-number">{(() => {
-            if (!attritionReport) return '—';
-            let sum = 0;
-            for (const leader of attritionReport.leaders) {
-              if (!currentCityFilter || leader.city === currentCityFilter) {
-                if (leader.manualAttritionRisk12 !== null && leader.manualAttritionRisk12 !== undefined) {
-                  sum += leader.manualAttritionRisk12;
-                } else {
-                  sum += getProbabilityForWindow(leader, 12);
+                return `${sum.toFixed(1)} чел.`;
+              })()}</div>
+              <div className="metric-label">За 9 мес.</div>
+            </div>
+            <div className="metric-item">
+              <div className="metric-number">{(() => {
+                if (!attritionReport) return '—';
+                let sum = 0;
+                for (const leader of attritionReport.leaders) {
+                  if (!currentCityFilter || leader.city === currentCityFilter) {
+                    if (leader.manualAttritionRisk12 !== null && leader.manualAttritionRisk12 !== undefined) {
+                      sum += leader.manualAttritionRisk12;
+                    } else {
+                      sum += getProbabilityForWindow(leader, 12);
+                    }
+                  }
                 }
-              }
-            }
-            return sum.toFixed(1);
-          })()}</div>
-          <div className="metric-label">Мат. ожидание уходов за 12 мес{currentCityFilter ? ` (${currentCityFilter})` : ''}</div>
-        </div>
+                return `${sum.toFixed(1)} чел.`;
+              })()}</div>
+              <div className="metric-label">За 12 мес.</div>
+            </div>
+          </div>
+        </section>
       </div>
 
       <div className="audit-summary">
@@ -722,22 +747,24 @@ function App() {
             {currentCityFilter ? `Журнал для ${currentCityFilter}` : 'Журнал по всем городам'}
           </div>
           {latestAuditEntry ? (
-            <div className="audit-summary-content">
-              <div className="audit-summary-value">{latestAuditEntry.requiredLeaders} лидеров</div>
-              <div className="audit-summary-detail">
-                К сроку: <strong>{formatDate(latestAuditEntry.targetDate)}</strong>
-              </div>
-              <div className="audit-summary-detail">
-                Город: <strong>{latestAuditEntry.city}</strong>
-              </div>
-              {latestAuditEntry.note && (
-                <div className="audit-summary-note">
-                  <span className="audit-summary-note-label">Комментарий:</span>
-                  <span>{latestAuditEntry.note}</span>
+            <div className="audit-summary-entry">
+              <div className="audit-summary-content">
+                <div className="audit-summary-value">{latestAuditEntry.requiredLeaders} лидеров</div>
+                <div className="audit-summary-detail">
+                  К сроку: <strong>{formatDate(latestAuditEntry.targetDate)}</strong>
                 </div>
-              )}
-              <div className="audit-summary-stamp">
-                Заявка создана: {formatDateTime(latestAuditEntry.createdAt)}
+                <div className="audit-summary-detail">
+                  Город: <strong>{latestAuditEntry.city}</strong>
+                </div>
+                {latestAuditEntry.note && (
+                  <div className="audit-summary-note">
+                    <span className="audit-summary-note-label">Комментарий:</span>
+                    <span>{latestAuditEntry.note}</span>
+                  </div>
+                )}
+                <div className="audit-summary-stamp">
+                  Заявка создана: {formatDateTime(latestAuditEntry.createdAt)}
+                </div>
               </div>
             </div>
           ) : (
@@ -821,7 +848,7 @@ function App() {
           </h2>
           <div className="leaders-list">
             {activeTab === 'leader' ? (
-              <table className="data-table">
+              <table className="data-table leaders-table">
                 <thead>
                   <tr>
                     <th scope="col" className="sortable-column" aria-sort={sortField === 'name' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
@@ -955,7 +982,7 @@ function App() {
                            {renderAttritionCell(displayValue6, isManual6)}
                            {renderAttritionCell(displayValue9, isManual9)}
                            {renderAttritionCell(displayValue12, isManual12)}
-                          <td>
+                          <td className="pip-cell">
                             {leader.pipName && (
                               <div className={`pip-info ${
                                 leader.endDate ? 'pip-completed' : 
@@ -1028,7 +1055,7 @@ function App() {
                 </tbody>
               </table>
             ) : (
-              <table className="data-table">
+              <table className="data-table coffee-shops-table">
                 <thead>
                   <tr>
                     <th>Название кофейни</th>
@@ -1427,16 +1454,18 @@ function App() {
                      />
                    </div>
 
-                   <div className="risk-actions">
-                     <button
-                       type="button"
-                       className="risk-clear-btn"
-                       onClick={clearAttritionRisk}
-                       disabled={!hasManualAttritionRiskValues}
-                     >
-                       Вернуть автоматический расчет
-                     </button>
-                   </div>
+                   {hasManualAttritionRiskValues && (
+                     <div className="risk-actions">
+                       <button
+                         type="button"
+                         className="risk-clear-btn"
+                         onClick={clearAttritionRisk}
+                       >
+                         <span className="risk-clear-icon" aria-hidden="true">↺</span>
+                         <span>Вернуть автоматический расчет</span>
+                       </button>
+                     </div>
+                   )}
                   
                   <button type="submit" className="submit-btn">
                     {editingLeader ? 'Обновить Лидера' : 'Добавить Лидера'}

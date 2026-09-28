@@ -181,17 +181,18 @@ textarea.form-input-sm {
 
 /* Audit Form */
 .audit-form {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-panel);
-  box-shadow: var(--shadow-panel);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .audit-form .form-group {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
 }
 
 .audit-form .form-label {
